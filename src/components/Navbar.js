@@ -173,7 +173,7 @@ const Navbar = () => {
                   </a>
                   <ul className="dropdown-menu">
                     {categories.map((category, index) => (
-                      <li>
+                      <li key={index}>
                         <Link
                           to={`/category/${category}`}
                           className="dropdown-item"

@@ -8,6 +8,7 @@ import {
   faHandshake,
   faMedal,
   faCircleCheck,
+  faCartPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import "../css/Body.css";
 import heroImage from "../images/baru.png";
@@ -15,22 +16,18 @@ import banner1 from "../images/design1.png";
 import banner2 from "../images/design2.png";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { useCart } from "../components/CartContext";
+
 const Body = () => {
-  const productsWrapperRef = useRef(null);
-
-  const scrollLeft = () => {
-    productsWrapperRef.current.scrollLeft -= 300;
-  };
-
-  const scrollRight = () => {
-    productsWrapperRef.current.scrollLeft += 300;
-  };
-
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [currentPage] = useState(1);
-  const productsPerPage = 8;
+  const productsPerPage = 10;
+  const { addToCart } = useCart();
 
+  const handleAddToCart = (product) => {
+    addToCart(product);
+  };
   useEffect(() => {
     // Fetch products
     axios
@@ -275,25 +272,66 @@ const Body = () => {
                 Lihat Semua Produk →
               </Link>
             </div>
-            <div className="row">
+            <div className="row g-4 row-cols-lg-5 row-cols-2 row-cols-md-3">
               {currentProducts.map((product) => (
-                <div className="col-md-3 mb-5" key={product.id}>
-                  <div className="card our-produk-card">
-                    <Link to={`/product/${product.id}`} className="card-link">
-                      <img
-                        src={product.image}
-                        className="card-img-top"
-                        alt={product.title}
-                      />
-                      <div className="card-body">
-                        <h5 className="card-title-allproduct">
-                          {product.title}
-                        </h5>
-                        <p className="card-text">
-                          <strong>${product.price}</strong>
-                        </p>
+                <div className="col">
+                  <div className="card card-product">
+                    <div className="card-body">
+                      <div className="text-center position-relative">
+                        {/* <div className="position-absolute top-0 start-0">
+                          <span className="badge bg-danger">Sale</span>
+                        </div> */}
+                        <Link to={`/product/${product.id}`}>
+                          <img
+                            src={product.image}
+                            alt="Grocery Ecommerce Template"
+                            className="mb-3 img-fluid card-img-top"
+                          />
+                        </Link>
                       </div>
-                    </Link>
+                      <div className="text-small mb-1">
+                        <Link
+                          to={`/category/${product.category}`}
+                          className="text-inherit text-decoration-none text-dark"
+                        >
+                          <small>{product.category}</small>
+                        </Link>
+                      </div>
+                      <h5 className="card-title fs-6">
+                        <Link
+                          to={`/product/${product.id}`}
+                          className="text-inherit text-decoration-none text-dark"
+                        >
+                          {product.title}
+                        </Link>
+                      </h5>
+                      <div>
+                        <small className="text-warning">
+                          <i className="fa-solid fa-star" />
+                          <i className="fa-solid fa-star" />
+                          <i className="fa-solid fa-starl" />
+                          <i className="fa-solid fa-star" />
+                          <i className="fa-solid fa-star-half" />
+                        </small>
+                        <span className="text-muted small">4.5(149)</span>
+                      </div>
+                      <div className="d-flex justify-content-between align-items-center mt-3">
+                        <div>
+                          <span className="text-dark">${product.price}</span>
+                          {/* <span className="text-decoration-line-through text-muted">
+                            $24
+                          </span> */}
+                        </div>
+                        <div>
+                          <button
+                            className="btn add-to-cart-btn"
+                            onClick={() => handleAddToCart(product)}
+                          >
+                            <FontAwesomeIcon icon={faCartPlus} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
