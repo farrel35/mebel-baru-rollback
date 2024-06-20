@@ -8,7 +8,15 @@ import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
 import { useCart } from "../components/CartContext";
 import "../css/ProductDetail.css";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSackDollar,
+  faThumbsUp,
+  faHandshake,
+  faMedal,
+  faCircleCheck,
+  faCartPlus,
+} from "@fortawesome/free-solid-svg-icons";
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -72,7 +80,10 @@ const ProductDetail = () => {
             <p className="product-id">Product ID : {product.id}</p>
             <h1 className="product-name">{product.title}</h1>
             <p className="product-price">Harga : ${product.price}</p>
-            <button className="add-to-cart" onClick={() => handleAddToCart(product)}>
+            <button
+              className="add-to-cart"
+              onClick={() => handleAddToCart(product)}
+            >
               Tambah ke keranjang
             </button>
           </div>
@@ -86,29 +97,78 @@ const ProductDetail = () => {
         <div className="product-slider">
           <h2>Featured Products</h2>
           <div className="slider-container">
-            <button className="slider-button prev" onClick={() => handlePageChange("prev")} disabled={currentPage === 1}>
+            <button
+              className="slider-button prev"
+              onClick={() => handlePageChange("prev")}
+              disabled={currentPage === 1}
+            >
               {"<"}
             </button>
             <div className="our-products-section product-cards">
-              <div className="row justify-content-center p-3">
+              <div className="row g-4 row-cols-lg-5 row-cols-2 row-cols-md-3 justify-content-center p-3">
                 {currentProducts.map((product) => (
-                  <div className="col-md-3" key={product.id}>
-                    <div className="card our-produk-card">
-                      <Link to={`/product/${product.id}`} className="card-link">
-                        <img src={product.image} className="card-img-top" alt={product.title} />
-                        <div className="card-body">
-                          <h5 className="card-title-allproduct">{product.title}</h5>
-                          <p className="card-text">
-                            <strong>${product.price}</strong>
-                          </p>
+                  <div className="col" key={product.id}>
+                    <div className="card card-product">
+                      <div className="card-body">
+                        <div className="text-center position-relative">
+                          <Link to={`/product/${product.id}`}>
+                            <img
+                              src={product.image}
+                              alt="Grocery Ecommerce Template"
+                              className="mb-3 img-fluid card-img-top"
+                            />
+                          </Link>
                         </div>
-                      </Link>
+                        <div className="text-small mb-1">
+                          <Link
+                            to={`/category/${product.category}`}
+                            className="text-inherit text-decoration-none text-dark"
+                          >
+                            <small>{product.category}</small>
+                          </Link>
+                        </div>
+                        <h5 className="card-title fs-6">
+                          <Link
+                            to={`/product/${product.id}`}
+                            className="text-inherit text-decoration-none text-dark"
+                          >
+                            {product.title}
+                          </Link>
+                        </h5>
+                        <div>
+                          <small className="text-warning">
+                            <i className="fa-solid fa-star" />
+                            <i className="fa-solid fa-star" />
+                            <i className="fa-solid fa-starl" />
+                            <i className="fa-solid fa-star" />
+                            <i className="fa-solid fa-star-half" />
+                          </small>
+                          <span className="text-muted small">4.5(149)</span>
+                        </div>
+                        <div className="d-flex justify-content-between align-items-center mt-3">
+                          <div>
+                            <span className="text-dark">${product.price}</span>
+                          </div>
+                          <div>
+                            <button
+                              className="btn add-to-cart-btn"
+                              onClick={() => handleAddToCart(product)}
+                            >
+                              <FontAwesomeIcon icon={faCartPlus} />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            <button className="slider-button next" onClick={() => handlePageChange("next")} disabled={currentPage === totalPages}>
+            <button
+              className="slider-button next"
+              onClick={() => handlePageChange("next")}
+              disabled={currentPage === totalPages}
+            >
               {">"}
             </button>
           </div>
