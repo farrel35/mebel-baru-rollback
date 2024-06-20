@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { HashLink } from "react-router-hash-link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInstagram,
@@ -59,16 +61,24 @@ const Footer = () => {
                 <p className="h6 lh-p mb-3 font-weight-bold">PAGES</p>
                 <ul className="footer mb-0 list-unstyled">
                   <li>
-                    <a href="#">Home</a>
+                    <HashLink to="/#" className="nav-link">
+                      Home
+                    </HashLink>
                   </li>
                   <li>
-                    <a href="#hero">Tentang Kami</a>
+                    <HashLink to="/#hero" className="nav-link">
+                      Tentang Kami
+                    </HashLink>
                   </li>
                   <li>
-                    <a href="#category">Kategori</a>
+                    <Link to="/all-products" className="nav-link">
+                      Produk
+                    </Link>
                   </li>
                   <li>
-                    <a href="#our-products">Produk</a>
+                    <HashLink to="/#faq" className="nav-link">
+                      FAQS
+                    </HashLink>
                   </li>
                 </ul>
               </div>
