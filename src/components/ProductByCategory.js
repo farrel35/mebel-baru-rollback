@@ -42,7 +42,7 @@ const ProductByCategory = () => {
         className="our-products-section container container-pcategory"
       >
         <h1>Products in {category}</h1>
-        <div className="row g-4 row-cols-lg-5 row-cols-2 row-cols-md-3">
+        <div className="row g-4 row-cols-1 row-cols-md-3 row-cols-lg-5">
           {products.map((product) => (
             <div className="col" key={product.id}>
               <div className="card card-product">

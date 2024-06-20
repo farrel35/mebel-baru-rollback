@@ -2,12 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-
-import Navbar from "./Navbar";
-import Footer from "./Footer";
-import BackToTopButton from "./BackToTopButton";
-import { useCart } from "../components/CartContext";
-import "../css/ProductDetail.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSackDollar,
@@ -17,6 +11,12 @@ import {
   faCircleCheck,
   faCartPlus,
 } from "@fortawesome/free-solid-svg-icons";
+import Navbar from "./Navbar";
+import Footer from "./Footer";
+import BackToTopButton from "./BackToTopButton";
+import { useCart } from "../components/CartContext";
+import "../css/ProductDetail.css";
+
 const ProductDetail = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
@@ -105,7 +105,7 @@ const ProductDetail = () => {
               {"<"}
             </button>
             <div className="our-products-section product-cards">
-              <div className="row g-4 row-cols-lg-5 row-cols-2 row-cols-md-3 justify-content-center p-3">
+              <div className="row g-4 justify-content-center row-cols-1 row-cols-md-3 row-cols-lg-5">
                 {currentProducts.map((product) => (
                   <div className="col" key={product.id}>
                     <div className="card card-product">

@@ -119,7 +119,7 @@ const AllProducts = () => {
           <div className="col-md-10">
             <section id="all-products" className="all-products-section">
               <div id="our-products" className="our-products-section">
-                <div className="row g-4 row-cols-lg-5 row-cols-2 row-cols-md-3">
+                <div className="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-4">
                   {currentProducts.map((product) => (
                     <div className="col" key={product.id}>
                       <div className="card card-product">
