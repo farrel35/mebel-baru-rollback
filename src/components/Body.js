@@ -274,13 +274,10 @@ const Body = () => {
             </div>
             <div className="row g-4 row-cols-lg-5 row-cols-2 row-cols-md-3">
               {currentProducts.map((product) => (
-                <div className="col">
+                <div className="col" key={product.id}>
                   <div className="card card-product">
                     <div className="card-body">
                       <div className="text-center position-relative">
-                        {/* <div className="position-absolute top-0 start-0">
-                          <span className="badge bg-danger">Sale</span>
-                        </div> */}
                         <Link to={`/product/${product.id}`}>
                           <img
                             src={product.image}
@@ -318,9 +315,6 @@ const Body = () => {
                       <div className="d-flex justify-content-between align-items-center mt-3">
                         <div>
                           <span className="text-dark">${product.price}</span>
-                          {/* <span className="text-decoration-line-through text-muted">
-                            $24
-                          </span> */}
                         </div>
                         <div>
                           <button
