@@ -266,12 +266,12 @@ const Navbar = () => {
                   <Link to="/login" className="btn btn-outline-light ms-2 px-4">
                     Login
                   </Link>
-                  <Link
+                  {/* <Link
                     to="/register"
                     className="btn btn-info btn-light ms-2 px-4 btn"
                   >
                     Daftar
-                  </Link>
+                  </Link> */}
                 </li>
               </ul>
             </div>
