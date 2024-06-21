@@ -27,6 +27,7 @@ const Body = () => {
   const handleAddToCart = (product) => {
     addToCart(product);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       try {

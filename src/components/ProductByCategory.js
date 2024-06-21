@@ -23,16 +23,38 @@ const ProductByCategory = () => {
   const handleAddToCart = (product) => {
     addToCart(product);
   };
+
   useEffect(() => {
-    axios
-      .get(`https://fakestoreapi.com/products/category/${category}`)
-      .then((response) => {
-        setProducts(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching products by category:", error);
-      });
-  }, [category]);
+    const fetchData = async () => {
+      try {
+        const productResponse = await axios.get(
+          `https://szdn6rxb-5000.asse.devtunnels.ms/products/category/${category}`
+        );
+        const categoryResponse = await axios.get(
+          "https://szdn6rxb-5000.asse.devtunnels.ms/category"
+        );
+
+        const productsData = productResponse.data.payload;
+        const categoriesData = categoryResponse.data.payload[0];
+
+        const mergedProducts = productsData.map((product) => {
+          const category = categoriesData.find(
+            (cat) => cat.id_category === product.id_category
+          );
+          return {
+            ...product,
+            category_name: category ? category.category_name : "Unknown",
+          };
+        });
+
+        setProducts(mergedProducts);
+        console.log(mergedProducts);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -44,13 +66,13 @@ const ProductByCategory = () => {
         <h1>Products in {category}</h1>
         <div className="row g-4 row-cols-1 row-cols-md-3 row-cols-lg-5">
           {products.map((product) => (
-            <div className="col" key={product.id}>
+            <div className="col" key={product.id_product}>
               <div className="card card-product">
                 <div className="card-body">
                   <div className="text-center position-relative">
-                    <Link to={`/product/${product.id}`}>
+                    <Link to={`/product/${product.id_product}`}>
                       <img
-                        src={product.image}
+                        src={`https://szdn6rxb-5000.asse.devtunnels.ms${product.image}`}
                         alt="Grocery Ecommerce Template"
                         className="mb-3 img-fluid card-img-top"
                       />
@@ -58,18 +80,18 @@ const ProductByCategory = () => {
                   </div>
                   <div className="text-small mb-1">
                     <Link
-                      to={`/category/${product.category}`}
+                      to={`/category/${product.category_name}`}
                       className="text-inherit text-decoration-none text-dark"
                     >
-                      <small>{product.category}</small>
+                      <small>{product.category_name}</small>
                     </Link>
                   </div>
                   <h5 className="card-title fs-6">
                     <Link
-                      to={`/product/${product.id}`}
+                      to={`/product/${product.id_product}`}
                       className="text-inherit text-decoration-none text-dark"
                     >
-                      {product.title}
+                      {product.product_name}
                     </Link>
                   </h5>
                   <div>
