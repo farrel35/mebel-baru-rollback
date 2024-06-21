@@ -24,34 +24,43 @@ const Body = () => {
   const [currentPage] = useState(1);
   const productsPerPage = 10;
   const { addToCart } = useCart();
-
   const handleAddToCart = (product) => {
     addToCart(product);
   };
   useEffect(() => {
-    // Fetch products
-    axios
-      .get("https://fakestoreapi.com/products")
-      .then((response) => {
-        setProducts(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching the products:", error);
-      });
+    const fetchData = async () => {
+      try {
+        const productResponse = await axios.get(
+          "https://szdn6rxb-5000.asse.devtunnels.ms/products"
+        );
+        const categoryResponse = await axios.get(
+          "https://szdn6rxb-5000.asse.devtunnels.ms/category"
+        );
 
-    // Fetch categories
-    axios
-      .get("https://fakestoreapi.com/products/categories")
-      .then((response) => {
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching the categories:", error);
-      });
+        const productsData = productResponse.data.payload;
+        const categoriesData = categoryResponse.data.payload[0];
+
+        const mergedProducts = productsData.map((product) => {
+          const category = categoriesData.find(
+            (cat) => cat.id_category === product.id_category
+          );
+          return {
+            ...product,
+            category_name: category ? category.category_name : "Unknown",
+          };
+        });
+
+        setProducts(mergedProducts);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
     AOS.init({
       duration: 1000,
       once: false,
     });
+    fetchData();
   }, []);
 
   // Get current products
@@ -240,21 +249,19 @@ const Body = () => {
             {/* <hr /> */}
             <h1 className="h1-center">Kategori</h1>
             <div className="row">
-              {categories.map((category, index) => (
-                <div className="col-md-3" key={index}>
+              {categories.map((category) => (
+                <div className="col-md-3" key={category.id_category}>
                   <div className="card card-transition">
-                    <Link to={`/category/${category}`}>
+                    <Link to={`/category/${category.category_name}`}>
                       <img
-                        src={`https://fakestoreapi.com/img/category${
-                          index + 1
-                        }.jpg`} // Placeholder for category image
+                        src={`https://szdn6rxb-5000.asse.devtunnels.ms${category.image}`}
                         className="card-img-top"
-                        alt={category}
+                        alt={category.category_name}
                       />
                     </Link>
                     <div className="card-body">
-                      <h5 className="card-title">{category}</h5>
-                      <p className="card-text">Description of {category}.</p>
+                      <h5 className="card-title">{category.category_name}</h5>
+                      {/* <p className="card-text">Description of {category}.</p> */}
                     </div>
                   </div>
                 </div>
@@ -274,13 +281,13 @@ const Body = () => {
             </div>
             <div className="row g-4 row-cols-1 row-cols-md-3 row-cols-lg-5">
               {currentProducts.map((product) => (
-                <div className="col" key={product.id}>
+                <div className="col" key={product.id_product}>
                   <div className="card card-product">
                     <div className="card-body">
                       <div className="text-center position-relative">
-                        <Link to={`/product/${product.id}`}>
+                        <Link to={`/product/${product.id_product}`}>
                           <img
-                            src={product.image}
+                            src={`https://szdn6rxb-5000.asse.devtunnels.ms${product.image}`}
                             alt="Grocery Ecommerce Template"
                             className="mb-3 img-fluid card-img-top"
                           />
@@ -288,18 +295,18 @@ const Body = () => {
                       </div>
                       <div className="text-small mb-1">
                         <Link
-                          to={`/category/${product.category}`}
+                          to={`/category/${product.id_category}`}
                           className="text-inherit text-decoration-none text-dark"
                         >
-                          <small>{product.category}</small>
+                          <small>{product.category_name}</small>
                         </Link>
                       </div>
                       <h5 className="card-title fs-6">
                         <Link
-                          to={`/product/${product.id}`}
+                          to={`/product/${product.id_product}`}
                           className="text-inherit text-decoration-none text-dark"
                         >
-                          {product.title}
+                          {product.product_name}
                         </Link>
                       </h5>
                       <div>
