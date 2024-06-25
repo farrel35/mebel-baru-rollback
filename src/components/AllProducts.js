@@ -154,20 +154,11 @@ const AllProducts = () => {
                               {product.product_name}
                             </Link>
                           </h5>
-                          <div>
-                            <small className="text-warning">
-                              <i className="fa-solid fa-star" />
-                              <i className="fa-solid fa-star" />
-                              <i className="fa-solid fa-starl" />
-                              <i className="fa-solid fa-star" />
-                              <i className="fa-solid fa-star-half" />
-                            </small>
-                            <span className="text-muted small">4.5(149)</span>
-                          </div>
+
                           <div className="d-flex justify-content-between align-items-center mt-3">
                             <div>
                               <span className="text-dark">
-                                ${product.price}
+                                Rp {product.price}
                               </span>
                             </div>
                             <div>
@@ -186,7 +177,7 @@ const AllProducts = () => {
                 </div>
               </div>
               <nav>
-                <ul className="pagination">
+                <ul className="pagination mt-5">
                   {pageNumbers.map((number) => (
                     <li key={number} className="page-item">
                       <a
