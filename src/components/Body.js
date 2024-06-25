@@ -17,6 +17,7 @@ import banner2 from "../images/design2.png";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useCart } from "../components/CartContext";
+import { fetchProducts, fetchCategories } from "./HandleAPI";
 
 const Body = () => {
   const [products, setProducts] = useState([]);
@@ -24,6 +25,7 @@ const Body = () => {
   const [currentPage] = useState(1);
   const productsPerPage = 10;
   const { addToCart } = useCart();
+
   const handleAddToCart = (product) => {
     addToCart(product);
   };
@@ -31,15 +33,8 @@ const Body = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productResponse = await axios.get(
-          "https://szdn6rxb-5000.asse.devtunnels.ms/products"
-        );
-        const categoryResponse = await axios.get(
-          "https://szdn6rxb-5000.asse.devtunnels.ms/category"
-        );
-
-        const productsData = productResponse.data.payload;
-        const categoriesData = categoryResponse.data.payload[0];
+        const productsData = await fetchProducts();
+        const categoriesData = await fetchCategories();
 
         const mergedProducts = productsData.map((product) => {
           const category = categoriesData.find(
@@ -57,14 +52,15 @@ const Body = () => {
         console.error("Error fetching data", error);
       }
     };
+
     AOS.init({
       duration: 1000,
       once: false,
     });
+
     fetchData();
   }, []);
 
-  // Get current products
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(
@@ -255,7 +251,7 @@ const Body = () => {
                   <div className="card card-transition">
                     <Link to={`/category/${category.category_name}`}>
                       <img
-                        src={`https://szdn6rxb-5000.asse.devtunnels.ms${category.image}`}
+                        src={`https://szdn6rxb-4000.asse.devtunnels.ms${category.image}`}
                         className="card-img-top"
                         alt={category.category_name}
                       />
@@ -288,7 +284,7 @@ const Body = () => {
                       <div className="text-center position-relative">
                         <Link to={`/product/${product.id_product}`}>
                           <img
-                            src={`https://szdn6rxb-5000.asse.devtunnels.ms${product.image}`}
+                            src={`https://szdn6rxb-4000.asse.devtunnels.ms${product.image}`}
                             alt="Grocery Ecommerce Template"
                             className="mb-3 img-fluid card-img-top"
                           />
@@ -296,7 +292,7 @@ const Body = () => {
                       </div>
                       <div className="text-small mb-1">
                         <Link
-                          to={`/category/${product.id_category}`}
+                          to={`/category/${product.category_name}`}
                           className="text-inherit text-decoration-none text-dark"
                         >
                           <small>{product.category_name}</small>

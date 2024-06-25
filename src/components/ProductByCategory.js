@@ -7,14 +7,9 @@ import BackToTopButton from "./BackToTopButton";
 import "../css/ProductByCategory.css";
 import { useCart } from "../components/CartContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSackDollar,
-  faThumbsUp,
-  faHandshake,
-  faMedal,
-  faCircleCheck,
-  faCartPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
+import { fetchProductsByCategory, fetchCategories } from "./HandleAPI";
+
 const ProductByCategory = () => {
   const { category } = useParams();
   const [products, setProducts] = useState([]);
@@ -27,15 +22,8 @@ const ProductByCategory = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productResponse = await axios.get(
-          `https://szdn6rxb-5000.asse.devtunnels.ms/products/category/${category}`
-        );
-        const categoryResponse = await axios.get(
-          "https://szdn6rxb-5000.asse.devtunnels.ms/category"
-        );
-
-        const productsData = productResponse.data.payload;
-        const categoriesData = categoryResponse.data.payload[0];
+        const productsData = await fetchProductsByCategory(category);
+        const categoriesData = await fetchCategories();
 
         const mergedProducts = productsData.map((product) => {
           const category = categoriesData.find(
@@ -48,13 +36,12 @@ const ProductByCategory = () => {
         });
 
         setProducts(mergedProducts);
-        console.log(mergedProducts);
       } catch (error) {
         console.error("Error fetching data", error);
       }
     };
     fetchData();
-  }, []);
+  }, [category]);
 
   return (
     <>
@@ -72,7 +59,7 @@ const ProductByCategory = () => {
                   <div className="text-center position-relative">
                     <Link to={`/product/${product.id_product}`}>
                       <img
-                        src={`https://szdn6rxb-5000.asse.devtunnels.ms${product.image}`}
+                        src={`https://szdn6rxb-4000.asse.devtunnels.ms${product.image}`}
                         alt="Grocery Ecommerce Template"
                         className="mb-3 img-fluid card-img-top"
                       />
