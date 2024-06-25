@@ -25,6 +25,22 @@ export const fetchProductsByCategory = async (category) => {
     throw error;
   }
 };
+
+export const fetchAllProducts = async (category = "") => {
+  try {
+    let url = `${BASE_URL}/products`;
+    if (category) {
+      url = `${BASE_URL}/products/category/${category}`;
+    }
+    const response = await axios.get(url);
+
+    return response.data.payload;
+  } catch (error) {
+    console.error("Error fetching products", error);
+    throw error;
+  }
+};
+
 export const fetchCategories = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/category`);

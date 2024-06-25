@@ -1,20 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
 import { useCart } from "../components/CartContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSackDollar,
-  faThumbsUp,
-  faHandshake,
-  faMedal,
-  faCircleCheck,
-  faCartPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
 import "../css/AllProduct.css";
+import { fetchProducts, fetchAllProducts, fetchCategories } from "./HandleAPI";
 
 const AllProducts = () => {
   const [products, setProducts] = useState([]);
@@ -27,41 +20,51 @@ const AllProducts = () => {
   const handleAddToCart = (product) => {
     addToCart(product);
   };
+
   useEffect(() => {
-    fetchProducts();
-    fetchCategories();
+    const fetchData = async () => {
+      try {
+        const productsData = await fetchProducts();
+        const categoriesData = await fetchCategories();
+
+        const mergedProducts = productsData.map((product) => {
+          const category = categoriesData.find(
+            (cat) => cat.id_category === product.id_category
+          );
+          return {
+            ...product,
+            category_name: category ? category.category_name : "Unknown",
+          };
+        });
+
+        setProducts(mergedProducts);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const fetchProducts = (category = "") => {
-    let url = "https://fakestoreapi.com/products";
-    if (category) {
-      url = `https://fakestoreapi.com/products/category/${category}`;
-    }
-    axios
-      .get(url)
-      .then((response) => {
-        setProducts(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching products:", error);
-      });
-  };
-
-  const fetchCategories = () => {
-    axios
-      .get("https://fakestoreapi.com/products/categories")
-      .then((response) => {
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
-  };
-
-  const handleCategoryClick = (category) => {
+  const handleCategoryClick = async (category) => {
     setSelectedCategory(category);
     setCurrentPage(1);
-    fetchProducts(category);
+    try {
+      const productsData = await fetchAllProducts(category);
+      const mergedProducts = productsData.map((product) => {
+        const category = categories.find(
+          (cat) => cat.id_category === product.id_category
+        );
+        return {
+          ...product,
+          category_name: category ? category.category_name : "Unknown",
+        };
+      });
+      setProducts(mergedProducts);
+    } catch (error) {
+      console.error("Error fetching products for category", error);
+    }
   };
 
   // Pagination logic
@@ -102,15 +105,17 @@ const AllProducts = () => {
                 >
                   All Products
                 </li>
-                {categories.map((category, index) => (
+                {categories.map((category) => (
                   <li
-                    key={index}
+                    key={category.id_category}
                     className={`list-group-item ${
-                      selectedCategory === category ? "active" : ""
+                      selectedCategory === category.category_name
+                        ? "active"
+                        : ""
                     }`}
-                    onClick={() => handleCategoryClick(category)}
+                    onClick={() => handleCategoryClick(category.category_name)}
                   >
-                    {category}
+                    {category.category_name}
                   </li>
                 ))}
               </ul>
@@ -121,13 +126,13 @@ const AllProducts = () => {
               <div id="our-products" className="our-products-section">
                 <div className="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-4">
                   {currentProducts.map((product) => (
-                    <div className="col" key={product.id}>
+                    <div className="col" key={product.id_product}>
                       <div className="card card-product">
                         <div className="card-body">
                           <div className="text-center position-relative">
-                            <Link to={`/product/${product.id}`}>
+                            <Link to={`/product/${product.id_product}`}>
                               <img
-                                src={product.image}
+                                src={`https://szdn6rxb-4000.asse.devtunnels.ms${product.image}`}
                                 alt="Grocery Ecommerce Template"
                                 className="mb-3 img-fluid card-img-top"
                               />
@@ -135,18 +140,18 @@ const AllProducts = () => {
                           </div>
                           <div className="text-small mb-1">
                             <Link
-                              to={`/category/${product.category}`}
+                              to={`/category/${product.category_name}`}
                               className="text-inherit text-decoration-none text-dark"
                             >
-                              <small>{product.category}</small>
+                              <small>{product.category_name}</small>
                             </Link>
                           </div>
                           <h5 className="card-title fs-6">
                             <Link
-                              to={`/product/${product.id}`}
+                              to={`/product/${product.id_product}`}
                               className="text-inherit text-decoration-none text-dark"
                             >
-                              {product.title}
+                              {product.product_name}
                             </Link>
                           </h5>
                           <div>
