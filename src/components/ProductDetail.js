@@ -3,19 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faSackDollar,
-  faThumbsUp,
-  faHandshake,
-  faMedal,
-  faCircleCheck,
-  faCartPlus,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
 import { useCart } from "../components/CartContext";
 import "../css/ProductDetail.css";
+import { fetchProducts, fetchProductDetail } from "./HandleAPI";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -27,23 +21,19 @@ const ProductDetail = () => {
   const { addToCart } = useCart();
 
   useEffect(() => {
-    axios
-      .get(`https://fakestoreapi.com/products/${id}`)
-      .then((response) => {
-        setProduct(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching the product details:", error);
-      });
+    const fetchData = async () => {
+      try {
+        const productsDetail = await fetchProductDetail(id);
+        const productsData = await fetchProducts();
 
-    axios
-      .get(`https://fakestoreapi.com/products`)
-      .then((response) => {
-        setAvailableProducts(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching available products:", error);
-      });
+        setProduct(productsDetail);
+        setAvailableProducts(productsData);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+
+    fetchData();
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [id]);
@@ -60,8 +50,8 @@ const ProductDetail = () => {
     addToCart(product);
   };
 
-  if (!product || !availableProducts.length) {
-    return <div>Loading...</div>;
+  if (!product) {
+    return;
   }
 
   const startIndex = (currentPage - 1) * productsPerPage;
@@ -74,11 +64,14 @@ const ProductDetail = () => {
       <div className="container-detail">
         <div className="main-product">
           <div className="product-image">
-            <img src={product.image} alt={product.title} />
+            <img
+              src={`https://szdn6rxb-4000.asse.devtunnels.ms${product.image}`}
+              alt={product.product_name}
+            />
           </div>
           <div className="product-details">
-            <p className="product-id">Product ID : {product.id}</p>
-            <h1 className="product-name">{product.title}</h1>
+            {/* <p className="product-id">Product ID : {product.id}</p> */}
+            <h1 className="product-name">{product.product_name}</h1>
             <p className="product-price">Harga : ${product.price}</p>
             <button
               className="add-to-cart"
@@ -107,13 +100,13 @@ const ProductDetail = () => {
             <div className="our-products-section product-cards">
               <div className="row g-4 justify-content-center row-cols-1 row-cols-md-3 row-cols-lg-5">
                 {currentProducts.map((product) => (
-                  <div className="col" key={product.id}>
+                  <div className="col" key={product.id_product}>
                     <div className="card card-product">
                       <div className="card-body">
                         <div className="text-center position-relative">
-                          <Link to={`/product/${product.id}`}>
+                          <Link to={`/product/${product.id_product}`}>
                             <img
-                              src={product.image}
+                              src={`https://szdn6rxb-4000.asse.devtunnels.ms${product.image}`}
                               alt="Grocery Ecommerce Template"
                               className="mb-3 img-fluid card-img-top"
                             />
@@ -121,18 +114,18 @@ const ProductDetail = () => {
                         </div>
                         <div className="text-small mb-1">
                           <Link
-                            to={`/category/${product.category}`}
+                            to={`/category/${product.category_name}`}
                             className="text-inherit text-decoration-none text-dark"
                           >
-                            <small>{product.category}</small>
+                            <small>{product.category_name}</small>
                           </Link>
                         </div>
                         <h5 className="card-title fs-6">
                           <Link
-                            to={`/product/${product.id}`}
+                            to={`/product/${product.id_product}`}
                             className="text-inherit text-decoration-none text-dark"
                           >
-                            {product.title}
+                            {product.product_name}
                           </Link>
                         </h5>
                         <div>

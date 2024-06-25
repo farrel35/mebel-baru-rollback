@@ -50,3 +50,13 @@ export const fetchCategories = async () => {
     throw error;
   }
 };
+
+export const fetchProductDetail = async (product) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/products/${product}`);
+    return response.data.payload;
+  } catch (error) {
+    console.error("Error fetching products", error);
+    throw error;
+  }
+};
