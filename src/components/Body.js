@@ -244,20 +244,28 @@ const Body = () => {
           <section id="category">
             {/* <hr /> */}
             <h1 className="h1-center">Kategori</h1>
-            <div className="row">
+            <div className="row g-4 row-cols-1 row-cols-md-3 row-cols-lg-4">
               {categories.map((category) => (
-                <div className="col-md-3" key={category.id_category}>
-                  <div className="card card-transition">
-                    <Link to={`/category/${category.category_name}`}>
-                      <img
-                        src={`https://szdn6rxb-4000.asse.devtunnels.ms${category.image}`}
-                        className="card-img-top"
-                        alt={category.category_name}
-                      />
-                    </Link>
+                <div className="col" key={category.id_category}>
+                  <div className="card card-product">
                     <div className="card-body">
-                      <h5 className="card-title">{category.category_name}</h5>
-                      {/* <p className="card-text">Description of {category}.</p> */}
+                      <div className="text-center position-relative">
+                        <Link to={`/product/${category.category_name}`}>
+                          <img
+                            src={`https://szdn6rxb-4000.asse.devtunnels.ms${category.image}`}
+                            alt="Category Image"
+                            className="mb-3 img-fluid card-img-top"
+                          />
+                        </Link>
+                      </div>
+                      <h5 className="text-center fs-6">
+                        <Link
+                          to={`/product/${category.category_name}`}
+                          className="text-inherit text-decoration-none text-dark"
+                        >
+                          {category.category_name}
+                        </Link>
+                      </h5>
                     </div>
                   </div>
                 </div>
@@ -284,7 +292,7 @@ const Body = () => {
                         <Link to={`/product/${product.id_product}`}>
                           <img
                             src={`https://szdn6rxb-4000.asse.devtunnels.ms${product.image}`}
-                            alt="Grocery Ecommerce Template"
+                            alt="Product Image"
                             className="mb-3 img-fluid card-img-top"
                           />
                         </Link>
