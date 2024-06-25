@@ -246,29 +246,25 @@ const Body = () => {
             <h1 className="h1-center">Kategori</h1>
             <div className="row g-4 row-cols-1 row-cols-md-3 row-cols-lg-4">
               {categories.map((category) => (
-                <div className="col" key={category.id_category}>
-                  <div className="card card-product">
-                    <div className="card-body">
-                      <div className="text-center position-relative">
-                        <Link to={`/product/${category.category_name}`}>
-                          <img
-                            src={`https://szdn6rxb-4000.asse.devtunnels.ms${category.image}`}
-                            alt="Category Image"
-                            className="mb-3 img-fluid card-img-top"
-                          />
-                        </Link>
-                      </div>
-                      <h5 className="text-center fs-6">
-                        <Link
-                          to={`/product/${category.category_name}`}
-                          className="text-inherit text-decoration-none text-dark"
-                        >
+                <Link
+                  to={`/category/${category.category_name}`}
+                  className="text-decoration-none text-inherit"
+                >
+                  <div className="col" key={category.id_category}>
+                    <div class="card card-product mb-lg-4">
+                      <div class="card-body text-center py-8">
+                        <img
+                          src={`https://szdn6rxb-4000.asse.devtunnels.ms${category.image}`}
+                          alt="Category Image"
+                          className="mb-3 img-fluid card-img-top"
+                        />
+                        <div class="text-truncate">
                           {category.category_name}
-                        </Link>
-                      </h5>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
             {/* <hr /> */}
