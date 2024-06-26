@@ -15,18 +15,16 @@ import banner1 from "../images/design1.png";
 import banner2 from "../images/design2.png";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useCart } from "../components/CartContext";
-import { fetchProducts, fetchCategories } from "./HandleAPI";
+import { fetchProducts, fetchCategories, addToCart } from "./HandleAPI";
 
 const Body = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [currentPage] = useState(1);
   const productsPerPage = 10;
-  const { addToCart } = useCart();
 
   const handleAddToCart = (product) => {
-    addToCart(product);
+    addToCart(product, 1);
   };
 
   useEffect(() => {

@@ -1,29 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
-import axios from "axios";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCartShopping,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 import { useCart } from "../components/CartContext";
-import image3 from "../images/user3-128x128.jpg";
 import logo from "../images/logo.png";
 import "../css/Navbar.css";
-import { fetchProducts, fetchCategories } from "./HandleAPI";
+import { fetchProducts, fetchCategories, getCart } from "./HandleAPI";
 
 // Komponen Navbar
 const Navbar = () => {
-  // Gunakan useCart untuk mengakses data keranjang belanja
-  const { cart, calculateSubtotal } = useCart();
-  // Deklarasikan state untuk pencarian dan hasil pencarian
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-
+  const [cartItems, setCartItems] = useState([]);
   // Mengambil data produk dari API atau data lokal saat komponen dimount
   useEffect(() => {
     const fetchData = async () => {
@@ -69,10 +63,35 @@ const Navbar = () => {
     }
   }, [searchQuery, allProducts]);
 
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const cartData = await getCart(); // Assuming getCart() fetches cart items
+        const productsData = await fetchProducts();
+        const mergedCartItems = cartData.map((cartItem) => {
+          const product = productsData.find(
+            (prod) => prod.id_product === cartItem.id_product
+          );
+          return {
+            ...cartItem,
+            product_name: product ? product.product_name : "Unknown",
+            image: product ? product.image : null,
+          };
+        });
+        // console.log(mergedCartItems);
+        setCartItems(mergedCartItems); // Set the merged cart items in state or wherever needed
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
+    };
+
+    fetchCart();
+  }, []);
+
   // Fungsi untuk merender item keranjang belanja
   const renderItems = () => {
     // Jika tidak ada item dalam keranjang
-    if (!cart || cart.length === 0) {
+    if (!cartItems || cartItems.length === 0) {
       return (
         <li className="dropdown-item">
           <b>No items in cart</b>
@@ -83,17 +102,17 @@ const Navbar = () => {
     // Jika ada item dalam keranjang
     return (
       <>
-        {cart.map((item) => (
-          <li key={item.id} className="dropdown-item d-flex">
+        {cartItems.map((item) => (
+          <li key={item.id_cart} className="dropdown-item d-flex">
             <img
-              src={item.image}
+              src={`http://localhost:4000${item.image}`}
               alt={item.title}
               width="64"
               height="64"
               className="flex-shrink-0"
             />
             <div className="d-flex flex-column justify-content-between ms-3">
-              <h6>{item.title}</h6>
+              <h6>{item.product_name}</h6>
               <p>
                 {item.quantity} x $ {item.price}
               </p>
@@ -101,7 +120,7 @@ const Navbar = () => {
           </li>
         ))}
         <li className="dropdown-item">
-          <b>Total</b>: $ {calculateSubtotal()}
+          {/* <b>Total</b>: $ {calculateSubtotal()} */}
         </li>
         <li className="dropdown-divider"></li>
         <li>
@@ -253,7 +272,7 @@ const Navbar = () => {
                   >
                     <FontAwesomeIcon icon={faCartShopping} />
                     <span className="position-absolute top-5 translate-middle badge bg-danger navbar-badge">
-                      {cart.length}
+                      {cartItems.length}
                     </span>
                   </a>
                   <ul

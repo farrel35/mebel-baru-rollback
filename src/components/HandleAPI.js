@@ -122,7 +122,6 @@ export const addToCart = async (product, quantity) => {
       throw new Error("User not authenticated");
     }
     const decodedToken = jwtDecode(token);
-    console.log(decodedToken.id_user);
 
     const BASE_URL = "http://localhost:4000";
 
@@ -150,6 +149,33 @@ export const addToCart = async (product, quantity) => {
     // Optionally return response.data if needed
     return response.data;
   } catch (error) {
+    Swal.fire({
+      title: "Error!",
+      text: `Anda harus login!`,
+      icon: "error",
+      confirmButtonText: "OK",
+    });
     console.error("Error adding to cart", error);
+  }
+};
+
+export const getCart = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("User not authenticated");
+    }
+
+    const BASE_URL = "http://localhost:4000";
+
+    const response = await axios.get(`${BASE_URL}/cart`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Error get cart", error);
   }
 };
