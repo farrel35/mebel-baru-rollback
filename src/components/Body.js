@@ -75,11 +75,11 @@ const Body = () => {
         <div className="container">
           {/* Bagian Why Choose Us */}
           <section id="why-choose-us" className="why-choose-us-section">
-            <div className="row">
-              <h2>
-                Our <span>Service</span>
-              </h2>
-              <div className="col-md-3" data-aos="fade-up">
+            <h2>
+              Our <span>Service</span>
+            </h2>
+            <div className="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-4">
+              <div className="col" data-aos="fade-up">
                 <div className="card why-choose-us-card card-transition">
                   <div className="icon-wrapper mt-3">
                     <FontAwesomeIcon
@@ -96,7 +96,7 @@ const Body = () => {
                   </div>
                 </div>
               </div>
-              <div className="col-md-3" data-aos="fade-up" data-aos-delay="100">
+              <div className="col" data-aos="fade-up" data-aos-delay="100">
                 <div className="card why-choose-us-card card-transition">
                   <div className="icon-wrapper mt-3">
                     <FontAwesomeIcon
@@ -113,7 +113,7 @@ const Body = () => {
                   </div>
                 </div>
               </div>
-              <div className="col-md-3" data-aos="fade-up" data-aos-delay="200">
+              <div className="col" data-aos="fade-up" data-aos-delay="200">
                 <div className="card why-choose-us-card card-transition">
                   <div className="icon-wrapper mt-3">
                     <FontAwesomeIcon
@@ -130,7 +130,7 @@ const Body = () => {
                   </div>
                 </div>
               </div>
-              <div className="col-md-3" data-aos="fade-up" data-aos-delay="300">
+              <div className="col" data-aos="fade-up" data-aos-delay="300">
                 <div className="card why-choose-us-card card-transition">
                   <div className="icon-wrapper mt-3">
                     <FontAwesomeIcon
