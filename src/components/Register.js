@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import "../css/Login.css";
+import { register } from "./HandleAPI";
 
 const Register = () => {
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleUsernameChange = (e) => setUsername(e.target.value);
+  const handleEmailChange = (e) => setEmail(e.target.value);
+  const handlePasswordChange = (e) => setPassword(e.target.value);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await register(username, email, password, setError);
+    } catch (error) {
+      console.error("Register error:", error);
+    }
+  };
   return (
     <>
       <Navbar />
@@ -19,13 +37,16 @@ const Register = () => {
                   <h1>Register</h1>
                   <p className="mb-6">Please enter your user information.</p>
                 </div>
-                <form>
+                {error && <div className="alert alert-danger">{error}</div>}
+
+                <form onSubmit={handleSubmit}>
                   <div className="form-floating mb-3">
                     <input
                       type="text"
                       className="form-control"
                       id="floatingInput"
                       placeholder="name"
+                      onChange={handleUsernameChange}
                     />
                     <label for="floatingInput">Name</label>
                   </div>
@@ -35,6 +56,7 @@ const Register = () => {
                       className="form-control"
                       id="floatingInput"
                       placeholder="Email"
+                      onChange={handleEmailChange}
                     />
                     <label for="floatingPassword">Email address</label>
                   </div>
@@ -44,6 +66,7 @@ const Register = () => {
                       className="form-control"
                       id="floatingPassword"
                       placeholder="Password"
+                      onChange={handlePasswordChange}
                     />
                     <label for="floatingPassword">Password</label>
                   </div>
