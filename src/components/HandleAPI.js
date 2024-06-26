@@ -1,7 +1,7 @@
 // API.js
 import axios from "axios";
 
-const BASE_URL = "https://szdn6rxb-4000.asse.devtunnels.ms";
+const BASE_URL = "http://localhost:4000";
 
 export const fetchProducts = async () => {
   try {

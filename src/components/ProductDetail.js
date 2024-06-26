@@ -67,7 +67,7 @@ const ProductDetail = () => {
             <div className="row gx-4 gx-lg-5 align-items-center">
               <div className="col-md-6">
                 <img
-                  src={`https://szdn6rxb-4000.asse.devtunnels.ms${product.image}`}
+                  src={`http://localhost:4000${product.image}`}
                   alt="Grocery Ecommerce Template"
                   className="card-img-product mb-5 mb-md-0"
                 />
@@ -120,7 +120,7 @@ const ProductDetail = () => {
                             <div className="text-center position-relative">
                               <Link to={`/product/${product.id_product}`}>
                                 <img
-                                  src={`https://szdn6rxb-4000.asse.devtunnels.ms${product.image}`}
+                                  src={`http://localhost:4000${product.image}`}
                                   alt="Grocery Ecommerce Template"
                                   className="mb-3 img-fluid card-img-top"
                                 />

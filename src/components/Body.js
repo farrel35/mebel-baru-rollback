@@ -60,6 +60,10 @@ const Body = () => {
     fetchData();
   }, []);
 
+  if (!products) {
+    return;
+  }
+
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = products.slice(
@@ -254,7 +258,7 @@ const Body = () => {
                     <div class="card card-product mb-lg-4">
                       <div class="card-body text-center py-8">
                         <img
-                          src={`https://szdn6rxb-4000.asse.devtunnels.ms${category.image}`}
+                          src={`http://localhost:4000${category.image}`}
                           alt="Category Image"
                           className="mb-3 img-fluid card-img-top"
                         />
@@ -287,7 +291,7 @@ const Body = () => {
                       <div className="text-center position-relative">
                         <Link to={`/product/${product.id_product}`}>
                           <img
-                            src={`https://szdn6rxb-4000.asse.devtunnels.ms${product.image}`}
+                            src={`http://localhost:4000${product.image}`}
                             alt="Product Image"
                             className="mb-3 img-fluid card-img-top"
                           />

@@ -67,6 +67,10 @@ const AllProducts = () => {
     }
   };
 
+  if (!products) {
+    return;
+  }
+
   // Pagination logic
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
@@ -132,7 +136,7 @@ const AllProducts = () => {
                           <div className="text-center position-relative">
                             <Link to={`/product/${product.id_product}`}>
                               <img
-                                src={`https://szdn6rxb-4000.asse.devtunnels.ms${product.image}`}
+                                src={`http://localhost:4000${product.image}`}
                                 alt="Grocery Ecommerce Template"
                                 className="mb-3 img-fluid card-img-top"
                               />
