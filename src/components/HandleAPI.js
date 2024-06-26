@@ -1,5 +1,6 @@
 import axios from "axios";
 import Swal from "sweetalert2";
+import { jwtDecode } from "jwt-decode";
 
 const BASE_URL = "http://localhost:4000";
 
@@ -111,5 +112,44 @@ export const register = async (username, email, password, setError) => {
     console.error("Error registering", error);
     setError("Registration failed. Please try again.");
     throw error;
+  }
+};
+
+export const addToCart = async (product, quantity) => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("User not authenticated");
+    }
+    const decodedToken = jwtDecode(token);
+    console.log(decodedToken.id_user);
+
+    const BASE_URL = "http://localhost:4000";
+
+    const response = await axios.post(
+      `${BASE_URL}/cart/add`,
+      {
+        id_user: decodedToken.id_user,
+        id_product: product.id_product,
+        quantity: quantity,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    Swal.fire({
+      title: "Success!",
+      text: `${product.product_name} has been added to the cart.`,
+      icon: "success",
+      confirmButtonText: "OK",
+    });
+
+    // Optionally return response.data if needed
+    return response.data;
+  } catch (error) {
+    console.error("Error adding to cart", error);
   }
 };

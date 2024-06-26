@@ -1,15 +1,16 @@
 // src/components/ProductDetail.js
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
-import { useCart } from "../components/CartContext";
+
 import "../css/ProductDetail.css";
 import { fetchProducts, fetchProductDetail } from "./HandleAPI";
+import { addToCart } from "./HandleAPI";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -18,7 +19,7 @@ const ProductDetail = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 4;
   const totalPages = Math.ceil(availableProducts.length / productsPerPage);
-  const { addToCart } = useCart();
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,8 +47,8 @@ const ProductDetail = () => {
     }
   };
 
-  const handleAddToCart = (product) => {
-    addToCart(product);
+  const handleAddToCart = async (product) => {
+    addToCart(product, quantity);
   };
 
   if (!product) {
@@ -82,13 +83,16 @@ const ProductDetail = () => {
                   <input
                     className="form-control text-center me-3"
                     id="inputQuantity"
-                    type="num"
+                    type="number" // Corrected to 'number' from 'num'
                     defaultValue={1}
+                    min={1} // Optional: Set minimum value if needed
                     style={{ maxWidth: "3rem" }}
+                    onChange={(e) => setQuantity(parseInt(e.target.value))}
                   />
                   <button
                     className="btn btn-outline-dark flex-shrink-0"
                     type="button"
+                    onClick={() => handleAddToCart(product)}
                   >
                     <i className="me-1" />
                     Add to cart
@@ -112,7 +116,7 @@ const ProductDetail = () => {
                   {"<"}
                 </button>
                 <div className="our-products-section product-cards">
-                  <div className="row g-4 justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-5">
+                  <div className="row g-4 justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-4 p-2">
                     {currentProducts.map((product) => (
                       <div className="col" key={product.id_product}>
                         <div className="card card-product">
