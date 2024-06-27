@@ -212,8 +212,6 @@ export const getUserData = async () => {
   const isExpired = currentTime > exp;
 
   if (isExpired) {
-    localStorage.removeItem("token");
-
     // Optionally handle success message or redirect
     Swal.fire({
       title: "Error!",
@@ -222,6 +220,8 @@ export const getUserData = async () => {
       confirmButtonText: "OK",
     }).then((result) => {
       if (result.isConfirmed) {
+        localStorage.removeItem("token");
+
         window.location.href = "/login";
       }
     });
