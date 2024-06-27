@@ -107,7 +107,7 @@ const Profile = () => {
                     onChange={handleInputChange}
                   />
                 </label>
-                <br />
+
                 <label>
                   Email:
                   <input
@@ -117,7 +117,7 @@ const Profile = () => {
                     onChange={handleInputChange}
                   />
                 </label>
-                <br />
+
                 <label>
                   No Hp:
                   <input
@@ -127,7 +127,7 @@ const Profile = () => {
                     onChange={handleInputChange}
                   />
                 </label>
-                <br />
+
                 <label>
                   Password:
                   <input
@@ -137,12 +137,12 @@ const Profile = () => {
                     onChange={handleInputChange}
                   />
                 </label>
-                <br />
+
                 <label>
                   Foto Profil:
                   <input type="file" onChange={handleFileChange} />
                 </label>
-                <br />
+
                 <button
                   type="button"
                   className="edit-button"
