@@ -159,7 +159,7 @@ const Navbar = () => {
           </li>
         ))}
         <li className="dropdown-item">
-          <b>Total</b>: $ {formatter.format(total)}
+          <b>Total</b>: {formatter.format(total)}
         </li>
         <li className="dropdown-divider"></li>
         <li>
