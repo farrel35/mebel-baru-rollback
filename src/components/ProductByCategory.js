@@ -16,6 +16,11 @@ const ProductByCategory = () => {
   const { category } = useParams();
   const [products, setProducts] = useState([]);
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   const handleAddToCart = (product) => {
     addToCart(product, 1);
   };
@@ -89,7 +94,9 @@ const ProductByCategory = () => {
 
                   <div className="d-flex justify-content-between align-items-center mt-3">
                     <div>
-                      <span className="text-dark">Rp {product.price}</span>
+                      <span className="text-dark">
+                        {formatter.format(product.price)}
+                      </span>
                     </div>
                     <div>
                       <button

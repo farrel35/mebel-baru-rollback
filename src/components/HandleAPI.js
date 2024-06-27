@@ -85,8 +85,6 @@ export const addToCart = async (product, quantity) => {
 
     const decodedToken = jwtDecode(token);
 
-    const BASE_URL = "http://localhost:4000";
-
     const response = await axios.post(
       `${BASE_URL}/cart/add`,
       {
@@ -134,13 +132,30 @@ export const getCart = async () => {
     throw new Error("User not authenticated");
   }
 
-  const BASE_URL = "http://localhost:4000";
-
   const response = await axios.get(`${BASE_URL}/cart`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  return response.data;
+};
+
+export const updateCartQuantity = async (id_cart, quantity) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("User not authenticated");
+  }
+  const response = await axios.put(
+    `${BASE_URL}/cart/${id_cart}`,
+    { quantity },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  window.location.reload();
 
   return response.data;
 };
@@ -160,8 +175,6 @@ export const getUserData = async () => {
     });
     throw new Error("User not authenticated");
   }
-
-  const BASE_URL = "http://localhost:4000";
 
   const response = await axios.get(`${BASE_URL}/profile`, {
     headers: {

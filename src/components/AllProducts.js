@@ -20,6 +20,11 @@ const AllProducts = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(8);
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   const handleAddToCart = (product) => {
     addToCart(product, 1);
   };
@@ -165,7 +170,7 @@ const AllProducts = () => {
                           <div className="d-flex justify-content-between align-items-center mt-3">
                             <div>
                               <span className="text-dark">
-                                Rp {product.price}
+                                {formatter.format(product.price)}
                               </span>
                             </div>
                             <div>

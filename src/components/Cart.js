@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
 import "../css/Cart.css";
+import { fetchProducts, getCart, updateCartQuantity } from "./HandleAPI";
 
 const Cart = () => {
+  const [cartItems, setCartItems] = useState([]);
+
   const TAX_RATE = 0.01;
 
   const [shippingInfo, setShippingInfo] = useState({
@@ -24,12 +27,150 @@ const Cart = () => {
     console.log("Shipping Information Submitted:", shippingInfo);
   };
 
-  const renderItems = () => {};
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const cartData = await getCart(); // Assuming getCart() fetches cart items
+        const productsData = await fetchProducts();
+
+        // Create a map to merge cart items with the same id_product
+        const mergedCartItemsMap = new Map();
+        cartData.forEach((cartItem) => {
+          const product = productsData.find(
+            (prod) => prod.id_product === cartItem.id_product
+          );
+          const mergedCartItem = {
+            ...cartItem,
+            product_name: product ? product.product_name : "Unknown",
+            image: product ? product.image : null,
+            totalQuantity:
+              (mergedCartItemsMap.get(cartItem.id_product)?.totalQuantity ||
+                0) + cartItem.quantity,
+            totalPrice:
+              (mergedCartItemsMap.get(cartItem.id_product)?.totalPrice || 0) +
+              parseFloat(cartItem.price) * parseInt(cartItem.quantity),
+          };
+          mergedCartItemsMap.set(cartItem.id_product, mergedCartItem);
+        });
+        const mergedCartItems = Array.from(mergedCartItemsMap.values());
+
+        setCartItems(mergedCartItems); // Set the merged cart items in state or wherever needed
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+      }
+    };
+
+    fetchCart();
+  }, []);
+
+  const increaseQuantity = async (id_product) => {
+    const updatedCartItems = cartItems.map((item) =>
+      item.id_product === id_product
+        ? {
+            ...item,
+            quantity: item.quantity + 1,
+            totalPrice: item.totalPrice + parseFloat(item.price),
+          }
+        : item
+    );
+
+    setCartItems(updatedCartItems);
+
+    try {
+      const itemToUpdate = updatedCartItems.find(
+        (item) => item.id_product === id_product
+      );
+      if (itemToUpdate) {
+        await updateCartQuantity(itemToUpdate.id_cart, itemToUpdate.quantity);
+      }
+    } catch (error) {
+      console.error("Failed to update cart quantity:", error);
+      // Handle error as needed, e.g., revert UI changes
+    }
+  };
+
+  const decreaseQuantity = async (id_product) => {
+    const updatedCartItems = cartItems.map((item) =>
+      item.id_product === id_product && item.quantity > 1
+        ? {
+            ...item,
+            quantity: item.quantity - 1,
+            totalPrice: item.totalPrice - parseFloat(item.price),
+          }
+        : item
+    );
+
+    setCartItems(updatedCartItems);
+
+    try {
+      const itemToUpdate = updatedCartItems.find(
+        (item) => item.id_product === id_product
+      );
+      if (itemToUpdate) {
+        await updateCartQuantity(itemToUpdate.id_cart, itemToUpdate.quantity);
+      }
+    } catch (error) {
+      console.error("Failed to update cart quantity:", error);
+      // Handle error as needed, e.g., revert UI changes
+    }
+  };
+
+  console.log(cartItems);
+  const renderItems = () => {
+    return cartItems.map((item) => (
+      <div key={item.id_cart} className="cart-card mb-3">
+        <div className="cart-card-body">
+          <div className="row justify-content-between align-items-center mb-3">
+            <div className="col-8 d-flex align-items-center">
+              <img
+                src={`http://localhost:4000${item.image}`}
+                className="img-fluid rounded-3"
+                alt="Shopping item"
+                style={{ width: "75px" }}
+              />
+              <div className="ms-3">
+                <h5 className="cart-item-title">{item.product_name}</h5>
+                <p className="small mb-0">Quantity: {item.totalQuantity}</p>
+              </div>
+            </div>
+            <div className="col-3 d-flex justify-content-center align-items-center">
+              <div className="d-flex">
+                <button
+                  onClick={() => decreaseQuantity(item.id_product)}
+                  className="btn btn-danger btn-sm"
+                >
+                  -
+                </button>
+                <button
+                  onClick={() => increaseQuantity(item.id_product)}
+                  className="btn btn-primary btn-sm ms-2"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="col-1 d-flex justify-content-end align-items-center">
+              <h5 className="cart-price">
+                {/* {formatter.format(item.price * item.quantity)} */}
+              </h5>
+              <a
+                href="#!"
+                className="ms-3 text-danger"
+                // onClick={() => removeItem(item.id)}
+              >
+                <i className="fas fa-trash-alt"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    ));
+  };
 
   return (
     <>
       <Navbar />
-      {/* <div className="container py-5 h-100 mt-5 cart-container">
+      <div className="container py-5 h-100 mt-5 cart-container">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col">
             <div className="cart-card">
@@ -48,7 +189,7 @@ const Cart = () => {
                       <div>
                         <p className="mb-1">Shopping cart</p>
                         <p className="mb-0">
-                          You have {cart.length} items in your cart
+                          You have {cartItems.length} items in your cart
                         </p>
                       </div>
                     </div>
@@ -111,15 +252,15 @@ const Cart = () => {
 
                         <div className="d-flex justify-content-between">
                           <span>Subtotal</span>
-                          <span>${calculateSubtotal()}</span>
+                          {/* <span>${calculateSubtotal()}</span> */}
                         </div>
                         <div className="d-flex justify-content-between">
                           <span>Tax ({TAX_RATE * 100}%)</span>
-                          <span>${calculateTax()}</span>
+                          {/* <span>${calculateTax()}</span> */}
                         </div>
                         <div className="d-flex justify-content-between">
                           <span>Total</span>
-                          <span>${calculateSubtotal() + calculateTax()}</span>
+                          {/* <span>${calculateSubtotal() + calculateTax()}</span> */}
                         </div>
                       </div>
                     </div>
@@ -129,7 +270,7 @@ const Cart = () => {
             </div>
           </div>
         </div>
-      </div> */}
+      </div>
       <Footer />
       <BackToTopButton />
     </>

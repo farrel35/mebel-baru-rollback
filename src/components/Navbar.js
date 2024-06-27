@@ -91,16 +91,26 @@ const Navbar = () => {
       try {
         const cartData = await getCart();
         const productsData = await fetchProducts();
-        const mergedCartItems = cartData.map((cartItem) => {
-          const product = productsData.find(
-            (prod) => prod.id_product === cartItem.id_product
+
+        // Merge cart items by product id
+        const mergedCartItems = cartData.reduce((acc, cartItem) => {
+          const existingItemIndex = acc.findIndex(
+            (item) => item.id_product === cartItem.id_product
           );
-          return {
-            ...cartItem,
-            product_name: product ? product.product_name : "Unknown",
-            image: product ? product.image : null,
-          };
-        });
+          if (existingItemIndex > -1) {
+            acc[existingItemIndex].quantity += cartItem.quantity;
+          } else {
+            const product = productsData.find(
+              (prod) => prod.id_product === cartItem.id_product
+            );
+            acc.push({
+              ...cartItem,
+              product_name: product ? product.product_name : "Unknown",
+              image: product ? product.image : null,
+            });
+          }
+          return acc;
+        }, []);
 
         setCartItems(mergedCartItems);
       } catch (error) {
@@ -120,6 +130,15 @@ const Navbar = () => {
       );
     }
 
+    const formatter = new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+    });
+
+    const total = cartItems
+      .reduce((acc, item) => acc + item.quantity * parseFloat(item.price), 0)
+      .toFixed(2);
+
     return (
       <>
         {cartItems.map((item) => (
@@ -134,13 +153,13 @@ const Navbar = () => {
             <div className="d-flex flex-column justify-content-between ms-3">
               <h6>{item.product_name}</h6>
               <p>
-                {item.quantity} x $ {item.price}
+                {item.quantity} x $ {formatter.format(item.price)}
               </p>
             </div>
           </li>
         ))}
         <li className="dropdown-item">
-          {/* <b>Total</b>: $ {calculateSubtotal()} */}
+          <b>Total</b>: $ {formatter.format(total)}
         </li>
         <li className="dropdown-divider"></li>
         <li>
@@ -234,16 +253,6 @@ const Navbar = () => {
                     FAQS
                   </HashLink>
                 </li>
-                {/* <li className="nav-item">
-                  <Link to="/profile" className="nav-link">
-                    Profile
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/admin" className="nav-link">
-                    admin
-                  </Link>
-                </li> */}
               </ul>
               <div className="nav navbar-nav justify-content-center flex-grow-1 pe-3">
                 <div className="container fluid">
@@ -341,10 +350,6 @@ const Navbar = () => {
                     >
                       Login
                     </Link>
-                    {/* Uncomment below if you have a register link */}
-                    {/* <Link to="/register" className="btn btn-info btn-light ms-2 px-4">
-            Daftar
-          </Link> */}
                   </li>
                 )}
               </ul>
