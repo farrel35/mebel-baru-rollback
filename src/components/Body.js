@@ -251,8 +251,9 @@ const Body = () => {
                 <Link
                   to={`/category/${category.category_name}`}
                   className="text-decoration-none text-inherit"
+                  key={category.id_category}
                 >
-                  <div className="col" key={category.id_category}>
+                  <div className="col">
                     <div className="card card-product mb-lg-4">
                       <div className="card-body text-center py-8">
                         <img
