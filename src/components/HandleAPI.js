@@ -145,6 +145,7 @@ export const addToCart = async (product, quantity) => {
 
 export const getCart = async () => {
   const token = localStorage.getItem("token");
+
   if (!token) {
     throw new Error("User not authenticated");
   }
@@ -201,6 +202,31 @@ export const updateCartQuantity = async (id_cart, quantity) => {
 
 export const getUserData = async () => {
   const token = localStorage.getItem("token");
+  const payload = JSON.parse(atob(token.split(".")[1]));
+  const exp = payload.exp;
+
+  if (!exp) {
+    throw new Error("Token does not have an expiration time");
+  }
+  const currentTime = Math.floor(Date.now() / 1000); // current time in seconds
+  const isExpired = currentTime > exp;
+
+  if (isExpired) {
+    localStorage.removeItem("token");
+
+    // Optionally handle success message or redirect
+    Swal.fire({
+      title: "Error!",
+      text: "Session Expired.",
+      icon: "warning",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/login";
+      }
+    });
+  }
+
   if (!token) {
     Swal.fire({
       title: "Error!",
