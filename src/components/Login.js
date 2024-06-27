@@ -14,9 +14,14 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!email || !password) {
+      setError("Email dan password harus diisi.");
+      return;
+    }
     try {
-      await login(email, password, setError);
+      await login(email, password);
     } catch (error) {
+      setError("Email atau Password salah");
       console.error("Login error:", error);
     }
   };

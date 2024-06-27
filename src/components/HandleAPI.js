@@ -1,6 +1,7 @@
 import axios from "axios";
 import Swal from "sweetalert2";
 import { jwtDecode } from "jwt-decode";
+import bcrypt from "bcryptjs";
 
 const BASE_URL = "http://localhost:4000";
 
@@ -35,7 +36,7 @@ export const fetchProductDetail = async (product) => {
   return response.data.payload;
 };
 
-export const login = async (email, password, setError) => {
+export const login = async (email, password) => {
   const response = await axios.post(`${BASE_URL}/users/login`, {
     email,
     password,
@@ -58,7 +59,7 @@ export const login = async (email, password, setError) => {
   return response.data;
 };
 
-export const register = async (username, email, password, setError) => {
+export const register = async (username, email, password) => {
   const response = await axios.post(`${BASE_URL}/users/register`, {
     username,
     email,
@@ -204,4 +205,56 @@ export const getUserData = async () => {
     },
   });
   return response.data;
+};
+
+export const updateProfile = async (inputData, file) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("User not authenticated");
+  }
+
+  const { username, email, no_hp, password } = inputData; // Destructure inputData to get profile details
+
+  // Ensure password is hashed before sending it to the server
+  const hashedPassword = await bcrypt.hash(password, 10); // Hash password using bcrypt
+
+  const formData = new FormData();
+  if (file) {
+    formData.append("image", file); // Append your file here
+  }
+
+  // Append other data
+  formData.append("username", username);
+  formData.append("email", email);
+  formData.append("no_hp", no_hp);
+  formData.append("password", hashedPassword); // Append hashed password
+
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/profile/edit`, // Replace with your actual endpoint for updating profile
+      formData, // Use formData instead of { username, email, no_hp, password }
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // Set content type for FormData
+        },
+      }
+    );
+
+    Swal.fire({
+      title: "Success!",
+      text: "Successfully updated profile.",
+      icon: "success",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.reload(); // Refresh the page after successful update
+      }
+    });
+
+    return response.data; // Return the updated profile data if needed
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    throw new Error("Failed to update profile");
+  }
 };

@@ -3,13 +3,20 @@ import "../css/Profile.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import EditPhoto from "./EditPhoto";
-import { getUserData } from "./HandleAPI";
+import { getUserData, updateProfile } from "./HandleAPI";
+
 const Profile = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [profilePicture, setProfilePicture] = useState(
     "https://via.placeholder.com/150"
   );
-  const [userData, setUserData] = useState(false);
+  const [userData, setUserData] = useState({
+    username: "",
+    email: "",
+    no_hp: "",
+    password: "", // State for password
+  });
+  const [file, setFile] = useState(null); // State to hold the selected file
 
   useEffect(() => {
     fetchUserData();
@@ -23,12 +30,39 @@ const Profile = () => {
       console.error("Error fetching user data:", error);
     }
   };
+
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
-  const handleUploadSuccess = (fileUrl) => {
-    setProfilePicture(fileUrl);
-    closeModal();
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserData({
+      ...userData,
+      [name]: value,
+    });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+  };
+
+  const handleSubmit = () => {
+    const inputData = {
+      username: userData.username,
+      email: userData.email,
+      no_hp: userData.no_hp,
+      password: userData.password, // Include password in inputData
+    };
+
+    // Call updateProfile with both profile data and file
+    updateProfile(inputData, file)
+      .then((response) => {
+        console.log("Profile updated successfully:", response);
+      })
+      .catch((error) => {
+        console.error("Failed to update profile:", error);
+      });
   };
 
   return (
@@ -47,7 +81,7 @@ const Profile = () => {
               <strong>Email:</strong> {userData.email}
             </p>
             <p>
-              <strong>Alamat:</strong> Alamat Pengguna
+              <strong>No Hp:</strong> {userData.no_hp}
             </p>
             <button className="edit-button" onClick={openModal}>
               Edit Profile
@@ -66,7 +100,12 @@ const Profile = () => {
               <form>
                 <label>
                   Nama:
-                  <input type="text" name="name" defaultValue="Nama Pengguna" />
+                  <input
+                    type="text"
+                    name="username"
+                    value={userData.username}
+                    onChange={handleInputChange}
+                  />
                 </label>
                 <br />
                 <label>
@@ -74,21 +113,41 @@ const Profile = () => {
                   <input
                     type="email"
                     name="email"
-                    defaultValue="email@domain.com"
+                    value={userData.email}
+                    onChange={handleInputChange}
                   />
                 </label>
                 <br />
                 <label>
-                  Alamat:
+                  No Hp:
                   <input
                     type="text"
-                    name="address"
-                    defaultValue="Alamat Pengguna"
+                    name="no_hp"
+                    value={userData.no_hp}
+                    onChange={handleInputChange}
                   />
                 </label>
                 <br />
-                <EditPhoto onUploadSuccess={handleUploadSuccess} />
-                <button type="submit" className="edit-button">
+                <label>
+                  Password:
+                  <input
+                    type="password"
+                    name="password"
+                    value={userData.password}
+                    onChange={handleInputChange}
+                  />
+                </label>
+                <br />
+                <label>
+                  Foto Profil:
+                  <input type="file" onChange={handleFileChange} />
+                </label>
+                <br />
+                <button
+                  type="button"
+                  className="edit-button"
+                  onClick={handleSubmit}
+                >
                   Simpan Perubahan
                 </button>
               </form>

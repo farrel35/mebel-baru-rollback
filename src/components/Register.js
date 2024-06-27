@@ -16,9 +16,14 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!username || !email || !password) {
+      setError("Nama, email, and harus diisi.");
+      return;
+    }
     try {
-      await register(username, email, password, setError);
+      await register(username, email, password);
     } catch (error) {
+      setError("Nama atau Email sudah dipakai");
       console.error("Register error:", error);
     }
   };
