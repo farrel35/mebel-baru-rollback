@@ -141,6 +141,28 @@ export const getCart = async () => {
   return response.data;
 };
 
+export const deleteCartItem = async (id_cart) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("User not authenticated");
+  }
+
+  try {
+    const response = await axios.delete(`${BASE_URL}/cart/${id_cart}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    window.location.reload();
+
+    return response.data; // Optionally return data confirming deletion
+  } catch (error) {
+    // Handle error, e.g., show error message
+    console.error("Error deleting cart item:", error);
+    throw error;
+  }
+};
+
 export const updateCartQuantity = async (id_cart, quantity) => {
   const token = localStorage.getItem("token");
   if (!token) {

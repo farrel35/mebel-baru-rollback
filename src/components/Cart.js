@@ -4,7 +4,12 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
 import "../css/Cart.css";
-import { fetchProducts, getCart, updateCartQuantity } from "./HandleAPI";
+import {
+  fetchProducts,
+  getCart,
+  deleteCartItem,
+  updateCartQuantity,
+} from "./HandleAPI";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -63,6 +68,15 @@ const Cart = () => {
     fetchCart();
   }, []);
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
+  const total = cartItems
+    .reduce((acc, item) => acc + item.totalQuantity * parseFloat(item.price), 0)
+    .toFixed(2);
+
   const increaseQuantity = async (id_product) => {
     const updatedCartItems = cartItems.map((item) =>
       item.id_product === id_product
@@ -115,7 +129,10 @@ const Cart = () => {
     }
   };
 
-  console.log(cartItems);
+  const handleDeleteCartItem = (id_cart) => {
+    deleteCartItem(id_cart);
+  };
+
   const renderItems = () => {
     return cartItems.map((item) => (
       <div key={item.id_cart} className="cart-card mb-3">
@@ -156,7 +173,7 @@ const Cart = () => {
               <a
                 href="#!"
                 className="ms-3 text-danger"
-                // onClick={() => removeItem(item.id)}
+                onClick={() => handleDeleteCartItem(item.id_cart)}
               >
                 <i className="fas fa-trash-alt"></i>
               </a>
@@ -252,7 +269,7 @@ const Cart = () => {
 
                         <div className="d-flex justify-content-between">
                           <span>Subtotal</span>
-                          {/* <span>${calculateSubtotal()}</span> */}
+                          <span>{formatter.format(total)}</span>
                         </div>
                         <div className="d-flex justify-content-between">
                           <span>Tax ({TAX_RATE * 100}%)</span>
