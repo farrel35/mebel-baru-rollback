@@ -106,6 +106,10 @@ export const addToCart = async (product, quantity) => {
       text: `${product.product_name} has been added to the cart.`,
       icon: "success",
       confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.reload();
+      }
     });
 
     return response.data;

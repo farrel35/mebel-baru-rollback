@@ -4,18 +4,20 @@ import Navbar from "./Navbar";
 import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
 import "../css/ProductByCategory.css";
-import { useCart } from "../components/CartContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
-import { fetchProductsByCategory, fetchCategories } from "./HandleAPI";
+import {
+  fetchProductsByCategory,
+  fetchCategories,
+  addToCart,
+} from "./HandleAPI";
 
 const ProductByCategory = () => {
   const { category } = useParams();
   const [products, setProducts] = useState([]);
-  const { addToCart } = useCart();
 
   const handleAddToCart = (product) => {
-    addToCart(product);
+    addToCart(product, 1);
   };
 
   useEffect(() => {
@@ -36,7 +38,7 @@ const ProductByCategory = () => {
 
         setProducts(mergedProducts);
       } catch (error) {
-        console.error("Error fetching data", error);
+        console.error("Error fetching data product & category", error);
       }
     };
     fetchData();

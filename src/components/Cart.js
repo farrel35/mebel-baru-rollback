@@ -3,12 +3,10 @@ import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
-import { useCart } from "../components/CartContext";
 import "../css/Cart.css";
 
 const Cart = () => {
   const TAX_RATE = 0.01;
-  const { cart, increaseQuantity, decreaseQuantity, removeItem } = useCart();
 
   const [shippingInfo, setShippingInfo] = useState({
     address: "",
@@ -26,56 +24,12 @@ const Cart = () => {
     console.log("Shipping Information Submitted:", shippingInfo);
   };
 
-  const calculateSubtotal = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-
-  const calculateTax = () => {
-    return calculateSubtotal() * TAX_RATE;
-  };
-
-  const renderItems = () => {
-    return cart.map((item) => (
-      <div key={item.id} className="cart-card mb-3">
-        <div className="cart-card-body">
-          <div className="d-flex justify-content-between">
-            <div className="d-flex flex-row align-items-center">
-              <div>
-                <img src={item.image} className="cart-img-fluid rounded-3" alt="Shopping item" style={{ width: "75px" }} />
-              </div>
-              <div className="ms-3">
-                <h5 className="cart-item-title">{item.title}</h5>
-                <p className="small mb-0">Quantity: {item.quantity}</p>
-              </div>
-            </div>
-            <div className="d-flex flex-row align-items-center">
-              <div className="cart-btn-container">
-                <button onClick={() => decreaseQuantity(item.id)} className="btn cart-btn-danger cart-btn-responsive">
-                  -
-                </button>
-              </div>
-              <div className="cart-btn-container">
-                <button onClick={() => increaseQuantity(item.id)} className="btn cart-btn-primary cart-btn-responsive">
-                  +
-                </button>
-              </div>
-              <div className="cart-price-container">
-                <h5 className="cart-price">${item.price * item.quantity}</h5>
-              </div>
-              <a href="#!" className="cart-remove-item" onClick={() => removeItem(item.id)}>
-                <i className="fas fa-trash-alt"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    ));
-  };
+  const renderItems = () => {};
 
   return (
     <>
       <Navbar />
-      <div className="container py-5 h-100 mt-5 cart-container">
+      {/* <div className="container py-5 h-100 mt-5 cart-container">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col">
             <div className="cart-card">
@@ -93,7 +47,9 @@ const Cart = () => {
                     <div className="d-flex justify-content-between align-items-center mb-4">
                       <div>
                         <p className="mb-1">Shopping cart</p>
-                        <p className="mb-0">You have {cart.length} items in your cart</p>
+                        <p className="mb-0">
+                          You have {cart.length} items in your cart
+                        </p>
                       </div>
                     </div>
 
@@ -109,20 +65,44 @@ const Cart = () => {
 
                         <form onSubmit={handleSubmit}>
                           <div className="mb-3">
-                            <input type="text" className="form-control" placeholder="Address" name="address" value={shippingInfo.address} onChange={handleInputChange} />
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Address"
+                              name="address"
+                              value={shippingInfo.address}
+                              onChange={handleInputChange}
+                            />
                           </div>
                           <div className="mb-3">
-                            <input type="text" className="form-control" placeholder="Phone Number" name="phoneNumber" value={shippingInfo.phoneNumber} onChange={handleInputChange} />
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Phone Number"
+                              name="phoneNumber"
+                              value={shippingInfo.phoneNumber}
+                              onChange={handleInputChange}
+                            />
                           </div>
                           <div className="mb-3">
-                            <select className="form-select" name="paymentMethod" value={shippingInfo.paymentMethod} onChange={handleInputChange}>
+                            <select
+                              className="form-select"
+                              name="paymentMethod"
+                              value={shippingInfo.paymentMethod}
+                              onChange={handleInputChange}
+                            >
                               <option value="">Select Payment Method</option>
                               <option value="credit_card">Credit Card</option>
                               <option value="paypal">Paypal</option>
-                              <option value="bank_transfer">Bank Transfer</option>
+                              <option value="bank_transfer">
+                                Bank Transfer
+                              </option>
                             </select>
                           </div>
-                          <button type="submit" className="btn cart-btn-success btn-block">
+                          <button
+                            type="submit"
+                            className="btn cart-btn-success btn-block"
+                          >
                             Checkout
                           </button>
                         </form>
@@ -149,7 +129,7 @@ const Cart = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <Footer />
       <BackToTopButton />
     </>

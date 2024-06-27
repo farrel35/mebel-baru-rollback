@@ -46,7 +46,7 @@ const Body = () => {
         setProducts(mergedProducts);
         setCategories(categoriesData);
       } catch (error) {
-        console.error("Error fetching data", error);
+        console.error("Error fetching data product & category", error);
       }
     };
 

@@ -6,7 +6,6 @@ import {
   faCartShopping,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
-import { useCart } from "../components/CartContext";
 import logo from "../images/logo.png";
 import "../css/Navbar.css";
 import {

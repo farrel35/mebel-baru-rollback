@@ -30,7 +30,7 @@ const ProductDetail = () => {
         setProduct(productsDetail);
         setAvailableProducts(productsData);
       } catch (error) {
-        console.error("Error fetching data", error);
+        console.error("Error fetching data product", error);
       }
     };
 
