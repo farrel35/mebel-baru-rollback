@@ -77,6 +77,22 @@ export const register = async (username, email, password) => {
   return response.data;
 };
 
+export const logout = async () => {
+  localStorage.removeItem("token");
+
+  // Optionally handle success message or redirect
+  Swal.fire({
+    title: "Sukses!",
+    text: "Berhasil Logout.",
+    icon: "success",
+    confirmButtonText: "OK",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "/login";
+    }
+  });
+};
+
 export const addToCart = async (product, quantity) => {
   try {
     const token = localStorage.getItem("token");

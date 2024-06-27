@@ -13,6 +13,7 @@ import {
   fetchCategories,
   getCart,
   getUserData,
+  logout,
 } from "./HandleAPI";
 
 // Komponen Navbar
@@ -34,15 +35,6 @@ const Navbar = () => {
       setIsLoggedIn(false);
     }
   }, []);
-
-  const fetchUserData = async () => {
-    try {
-      const data = await getUserData();
-      setUserData(data);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,11 +61,6 @@ const Navbar = () => {
 
     fetchData();
   }, []);
-
-  const handleSearchInputChange = (event) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-  };
 
   useEffect(() => {
     if (searchQuery) {
@@ -120,6 +107,23 @@ const Navbar = () => {
 
     fetchCart();
   }, []);
+  const handleSearchInputChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+  };
+
+  const fetchUserData = async () => {
+    try {
+      const data = await getUserData();
+      setUserData(data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+  };
 
   const renderItems = () => {
     if (!cartItems || cartItems.length === 0) {
@@ -336,7 +340,11 @@ const Navbar = () => {
                         </a>
                       </li>
                       <li>
-                        <a className="dropdown-item" href="/category/Kursi">
+                        <a
+                          className="dropdown-item"
+                          href=""
+                          onClick={handleLogout}
+                        >
                           Logout
                         </a>
                       </li>

@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../css/Profile.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import EditPhoto from "./EditPhoto";
 import { getUserData, updateProfile } from "./HandleAPI";
 
 const Profile = () => {
@@ -16,7 +15,10 @@ const Profile = () => {
     no_hp: "",
     password: "", // State for password
   });
+  const passwordRef = useRef();
+
   const [file, setFile] = useState(null); // State to hold the selected file
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchUserData();
@@ -46,13 +48,16 @@ const Profile = () => {
     const file = e.target.files[0];
     setFile(file);
   };
-
   const handleSubmit = () => {
+    if (!passwordRef.current.value) {
+      setError("Password Harus diisi");
+      return;
+    }
     const inputData = {
       username: userData.username,
       email: userData.email,
       no_hp: userData.no_hp,
-      password: userData.password, // Include password in inputData
+      password: passwordRef.current.value,
     };
 
     // Call updateProfile with both profile data and file
@@ -97,6 +102,8 @@ const Profile = () => {
                 &times;
               </span>
               <h2>Edit Profil</h2>
+              {error && <div className="alert alert-danger">{error}</div>}
+
               <form>
                 <label>
                   Nama:
@@ -130,12 +137,7 @@ const Profile = () => {
 
                 <label>
                   Password:
-                  <input
-                    type="password"
-                    name="password"
-                    value={userData.password}
-                    onChange={handleInputChange}
-                  />
+                  <input type="password" name="password" ref={passwordRef} />
                 </label>
 
                 <label>
