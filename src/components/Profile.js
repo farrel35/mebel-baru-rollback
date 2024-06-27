@@ -6,9 +6,7 @@ import { getUserData, updateProfile } from "./HandleAPI";
 
 const Profile = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(
-    "https://via.placeholder.com/150"
-  );
+
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -76,7 +74,11 @@ const Profile = () => {
       <div className="profile-container">
         <h1>Profil Pengguna</h1>
         <div className="profile-details">
-          <img src={profilePicture} alt="Profile" className="profile-picture" />
+          <img
+            src={`http://localhost:4000${userData.image}`}
+            alt="Profile"
+            className="profile-picture"
+          />
 
           <div className="profile-info">
             <p>
