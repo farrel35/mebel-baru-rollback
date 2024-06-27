@@ -139,12 +139,14 @@ const Cart = () => {
         <div className="cart-card-body">
           <div className="row justify-content-between align-items-center mb-3">
             <div className="col-8 d-flex align-items-center">
-              <img
-                src={`http://localhost:4000${item.image}`}
-                className="img-fluid rounded-3"
-                alt="Shopping item"
-                style={{ width: "75px" }}
-              />
+              <Link to={`/product/${item.id_product}`}>
+                <img
+                  src={`http://localhost:4000${item.image}`}
+                  className="img-fluid rounded-3"
+                  alt="Shopping item"
+                  style={{ width: "75px" }}
+                />
+              </Link>
               <div className="ms-3">
                 <h5 className="cart-item-title">{item.product_name}</h5>
                 <p className="small mb-0">Quantity: {item.totalQuantity}</p>

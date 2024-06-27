@@ -103,58 +103,84 @@ const Profile = () => {
               <span className="close" onClick={closeModal}>
                 &times;
               </span>
-              <h2>Edit Profil</h2>
-              {error && <div className="alert alert-danger">{error}</div>}
+              <div className="row">
+                <div className={!file ? "col-12" : "col-lg-7"}>
+                  <h2>Edit Profil</h2>
+                  {error && <div className="alert alert-danger">{error}</div>}
 
-              <form>
-                <label>
-                  Nama:
-                  <input
-                    type="text"
-                    name="username"
-                    value={userData.username}
-                    onChange={handleInputChange}
-                  />
-                </label>
+                  <form>
+                    <label>
+                      Nama:
+                      <input
+                        type="text"
+                        name="username"
+                        value={userData.username}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </label>
 
-                <label>
-                  Email:
-                  <input
-                    type="email"
-                    name="email"
-                    value={userData.email}
-                    onChange={handleInputChange}
-                  />
-                </label>
+                    <label>
+                      Email:
+                      <input
+                        type="email"
+                        name="email"
+                        value={userData.email}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </label>
 
-                <label>
-                  No Hp:
-                  <input
-                    type="text"
-                    name="no_hp"
-                    value={userData.no_hp}
-                    onChange={handleInputChange}
-                  />
-                </label>
+                    <label>
+                      No Hp:
+                      <input
+                        type="text"
+                        name="no_hp"
+                        value={userData.no_hp}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </label>
 
-                <label>
-                  Password:
-                  <input type="password" name="password" ref={passwordRef} />
-                </label>
+                    <label>
+                      Password:
+                      <input
+                        type="password"
+                        name="password"
+                        ref={passwordRef}
+                        className="form-control"
+                      />
+                    </label>
 
-                <label>
-                  Foto Profil:
-                  <input type="file" onChange={handleFileChange} />
-                </label>
+                    <label>
+                      Foto Profil:
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        className="form-control-file"
+                      />
+                    </label>
 
-                <button
-                  type="button"
-                  className="edit-button"
-                  onClick={handleSubmit}
-                >
-                  Simpan Perubahan
-                </button>
-              </form>
+                    <button
+                      type="button"
+                      className="edit-button btn btn-primary"
+                      onClick={handleSubmit}
+                    >
+                      Simpan Perubahan
+                    </button>
+                  </form>
+                </div>
+
+                {file && (
+                  <div className="col-lg-5 mt-3 mt-lg-0">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      className="profile-picture img-fluid"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
