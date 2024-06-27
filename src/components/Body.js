@@ -21,7 +21,7 @@ const Body = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [currentPage] = useState(1);
-  const productsPerPage = 10;
+  const productsPerPage = 8;
 
   const handleAddToCart = (product) => {
     addToCart(product, 1);
@@ -253,14 +253,14 @@ const Body = () => {
                   className="text-decoration-none text-inherit"
                 >
                   <div className="col" key={category.id_category}>
-                    <div class="card card-product mb-lg-4">
-                      <div class="card-body text-center py-8">
+                    <div className="card card-product mb-lg-4">
+                      <div className="card-body text-center py-8">
                         <img
                           src={`http://localhost:4000${category.image}`}
                           alt="Category Image"
                           className="mb-3 img-fluid card-img-top"
                         />
-                        <div class="text-truncate">
+                        <div className="text-truncate">
                           {category.category_name}
                         </div>
                       </div>
@@ -281,7 +281,7 @@ const Body = () => {
                 Lihat Semua Produk →
               </Link>
             </div>
-            <div className="row g-4 row-cols-1 row-cols-md-3 row-cols-lg-5">
+            <div className="row g-4 row-cols-1 row-cols-md-3 row-cols-lg-4">
               {currentProducts.map((product) => (
                 <div className="col" key={product.id_product}>
                   <div className="card card-product">

@@ -4,6 +4,36 @@ import { jwtDecode } from "jwt-decode";
 
 const BASE_URL = "http://localhost:4000";
 
+function isTokenExpired(token) {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const exp = payload.exp;
+    if (!exp) {
+      throw new Error("Token does not have an expiration time");
+    }
+    const currentTime = Math.floor(Date.now() / 1000); // current time in seconds
+    const isExpired = currentTime > exp;
+    if (isExpired) {
+      localStorage.removeItem("token");
+      Swal.fire({
+        title: "Error!",
+        text: "Session Expired.",
+        icon: "error",
+        confirmButtonText: "OK",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/login";
+        }
+      });
+    }
+    return isExpired;
+  } catch (error) {
+    console.error("Failed to decode token:", error);
+    window.location.href = "/login";
+    return true; // consider the token expired if there's an error
+  }
+}
+
 export const fetchProducts = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/products`);
@@ -121,39 +151,46 @@ export const addToCart = async (product, quantity) => {
     if (!token) {
       throw new Error("User not authenticated");
     }
-    const decodedToken = jwtDecode(token);
 
-    const BASE_URL = "http://localhost:4000";
+    if (!isTokenExpired(token)) {
+      const decodedToken = jwtDecode(token);
 
-    const response = await axios.post(
-      `${BASE_URL}/cart/add`,
-      {
-        id_user: decodedToken.id_user,
-        id_product: product.id_product,
-        quantity: quantity,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const BASE_URL = "http://localhost:4000";
+
+      const response = await axios.post(
+        `${BASE_URL}/cart/add`,
+        {
+          id_user: decodedToken.id_user,
+          id_product: product.id_product,
+          quantity: quantity,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    Swal.fire({
-      title: "Success!",
-      text: `${product.product_name} has been added to the cart.`,
-      icon: "success",
-      confirmButtonText: "OK",
-    });
+      Swal.fire({
+        title: "Success!",
+        text: `${product.product_name} has been added to the cart.`,
+        icon: "success",
+        confirmButtonText: "OK",
+      });
 
-    // Optionally return response.data if needed
-    return response.data;
+      // Optionally return response.data if needed
+      return response.data;
+    }
   } catch (error) {
     Swal.fire({
       title: "Error!",
-      text: `Anda harus login!`,
+      text: "Anda Harus Login.",
       icon: "error",
       confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/login";
+      }
     });
     console.error("Error adding to cart", error);
   }
@@ -166,16 +203,49 @@ export const getCart = async () => {
       throw new Error("User not authenticated");
     }
 
-    const BASE_URL = "http://localhost:4000";
+    if (!isTokenExpired(token)) {
+      const BASE_URL = "http://localhost:4000";
 
-    const response = await axios.get(`${BASE_URL}/cart`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      const response = await axios.get(`${BASE_URL}/cart`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    return response.data;
+      return response.data;
+    }
   } catch (error) {
     console.error("Error get cart", error);
+  }
+};
+
+export const getUserData = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      Swal.fire({
+        title: "Error!",
+        text: "Anda Harus Login.",
+        icon: "error",
+        confirmButtonText: "OK",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "/login";
+        }
+      });
+      throw new Error("User not authenticated");
+    }
+    if (!isTokenExpired(token)) {
+      const BASE_URL = "http://localhost:4000";
+
+      const response = await axios.get(`${BASE_URL}/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    }
+  } catch (error) {
+    console.error("Error get user data", error);
   }
 };

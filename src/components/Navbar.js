@@ -9,7 +9,12 @@ import {
 import { useCart } from "../components/CartContext";
 import logo from "../images/logo.png";
 import "../css/Navbar.css";
-import { fetchProducts, fetchCategories, getCart } from "./HandleAPI";
+import {
+  fetchProducts,
+  fetchCategories,
+  getCart,
+  getUserData,
+} from "./HandleAPI";
 
 // Komponen Navbar
 const Navbar = () => {
@@ -18,7 +23,28 @@ const Navbar = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cartItems, setCartItems] = useState([]);
-  // Mengambil data produk dari API atau data lokal saat komponen dimount
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+      fetchUserData();
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  const fetchUserData = async () => {
+    try {
+      const data = await getUserData();
+      setUserData(data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -45,13 +71,11 @@ const Navbar = () => {
     fetchData();
   }, []);
 
-  // Fungsi untuk menghandle perubahan input pencarian
   const handleSearchInputChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
   };
 
-  // Fungsi untuk melakukan pencarian berdasarkan searchQuery
   useEffect(() => {
     if (searchQuery) {
       const results = allProducts.filter((product) =>
@@ -66,7 +90,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const cartData = await getCart(); // Assuming getCart() fetches cart items
+        const cartData = await getCart();
         const productsData = await fetchProducts();
         const mergedCartItems = cartData.map((cartItem) => {
           const product = productsData.find(
@@ -78,19 +102,17 @@ const Navbar = () => {
             image: product ? product.image : null,
           };
         });
-        // console.log(mergedCartItems);
-        setCartItems(mergedCartItems); // Set the merged cart items in state or wherever needed
+
+        setCartItems(mergedCartItems);
       } catch (error) {
-        console.error("Error fetching cart:", error);
+        return;
       }
     };
 
     fetchCart();
   }, []);
 
-  // Fungsi untuk merender item keranjang belanja
   const renderItems = () => {
-    // Jika tidak ada item dalam keranjang
     if (!cartItems || cartItems.length === 0) {
       return (
         <li className="dropdown-item">
@@ -99,7 +121,6 @@ const Navbar = () => {
       );
     }
 
-    // Jika ada item dalam keranjang
     return (
       <>
         {cartItems.map((item) => (
@@ -282,17 +303,51 @@ const Navbar = () => {
                     {renderItems()}
                   </ul>
                 </li>
-                <li className="nav-item">
-                  <Link to="/login" className="btn btn-outline-light ms-2 px-4">
-                    Login
-                  </Link>
-                  {/* <Link
-                    to="/register"
-                    className="btn btn-info btn-light ms-2 px-4 btn"
-                  >
-                    Daftar
-                  </Link> */}
-                </li>
+                {isLoggedIn ? (
+                  <li className="nav-item dropdown">
+                    <a
+                      href="#"
+                      className="nav-link"
+                      id="userDropdown"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      {/* <FontAwesomeIcon icon={faUser} /> */}
+                      {/* <img
+                        src={userData.avatarUrl}
+                        alt={userData.username}
+                        className="avatar"
+                      /> */}
+                      {userData.username}
+                    </a>
+                    <ul className="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a className="dropdown-item" href="/profile">
+                          Profile
+                        </a>
+                      </li>
+                      <li>
+                        <a className="dropdown-item" href="/category/Kursi">
+                          Logout
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                ) : (
+                  <li className="nav-item">
+                    <Link
+                      to="/login"
+                      className="btn btn-outline-light ms-2 px-4"
+                    >
+                      Login
+                    </Link>
+                    {/* Uncomment below if you have a register link */}
+                    {/* <Link to="/register" className="btn btn-info btn-light ms-2 px-4">
+            Daftar
+          </Link> */}
+                  </li>
+                )}
               </ul>
             </div>
           </div>
