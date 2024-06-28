@@ -9,8 +9,8 @@ import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
 
 import "../css/ProductDetail.css";
-import { fetchProducts, fetchProductDetail } from "./HandleAPI";
-import { addToCart } from "./HandleAPI";
+import { fetchProducts, fetchProductDetail } from "./HandleAPI_User";
+import { addToCart } from "./HandleAPI_User";
 
 const ProductDetail = () => {
   const { id } = useParams();

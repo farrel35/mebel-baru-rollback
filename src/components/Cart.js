@@ -9,7 +9,7 @@ import {
   getCart,
   deleteCartItem,
   updateCartQuantity,
-} from "./HandleAPI";
+} from "./HandleAPI_User";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);

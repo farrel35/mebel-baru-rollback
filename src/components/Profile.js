@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import "../css/Profile.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import { getUserData, updateProfile } from "./HandleAPI";
+import { getUserData, updateProfile } from "./HandleAPI_User";
 
 const Profile = () => {
   const [modalOpen, setModalOpen] = useState(false);

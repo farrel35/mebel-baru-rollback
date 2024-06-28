@@ -15,7 +15,7 @@ import banner1 from "../images/design1.png";
 import banner2 from "../images/design2.png";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { fetchProducts, fetchCategories, addToCart } from "./HandleAPI";
+import { fetchProducts, fetchCategories, addToCart } from "./HandleAPI_User";
 
 const Body = () => {
   const [products, setProducts] = useState([]);

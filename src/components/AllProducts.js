@@ -11,7 +11,7 @@ import {
   fetchAllProducts,
   fetchCategories,
   addToCart,
-} from "./HandleAPI";
+} from "./HandleAPI_User";
 
 const AllProducts = () => {
   const [products, setProducts] = useState([]);

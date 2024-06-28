@@ -10,7 +10,7 @@ import {
   fetchProductsByCategory,
   fetchCategories,
   addToCart,
-} from "./HandleAPI";
+} from "./HandleAPI_User";
 
 const ProductByCategory = () => {
   const { category } = useParams();

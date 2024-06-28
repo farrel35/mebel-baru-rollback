@@ -14,7 +14,7 @@ import {
   getCart,
   getUserData,
   logout,
-} from "./HandleAPI";
+} from "./HandleAPI_User";
 
 // Komponen Navbar
 const Navbar = () => {

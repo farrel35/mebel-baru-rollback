@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "./Navbar";
 import "../css/Login.css";
-import { register } from "./HandleAPI";
+import { register } from "./HandleAPI_User";
 
 const Register = () => {
   const [username, setUsername] = useState("");
