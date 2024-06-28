@@ -1,35 +1,78 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "../../css/Admin-css/produkadmin.css";
+import { fetchProducts, updateProduct, deleteProduct } from "./HandleAPI_Admin";
 
 const ProductManagement = () => {
-  const [products, setProducts] = useState([]);
-  const [editProductId, setEditProductId] = useState(null); // State untuk id produk yang sedang diedit
-  const [deleteProductId, setDeleteProductId] = useState(null); // State untuk id produk yang akan dihapus
+  const [products, setProducts] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null); // State to hold the selected product
+  const [file, setFile] = useState(null); // State to hold the selected file
+
+  const openModal = (product) => {
+    setSelectedProduct(product);
+    setModalOpen(true);
+  };
+  const closeModal = () => {
+    setSelectedProduct(null);
+    setModalOpen(false);
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedProduct({
+      ...selectedProduct,
+      [name]: value,
+    });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+  };
+
+  const handleDeleteProduct = async (id_product) => {
+    deleteProduct(id_product);
+    const productsData = await fetchProducts();
+    setProducts(productsData);
+  };
+
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append("id_product", selectedProduct.id_product);
+    formData.append("product_name", selectedProduct.product_name);
+    formData.append("description", selectedProduct.description);
+    formData.append("price", selectedProduct.price);
+    formData.append("stock", selectedProduct.stock);
+
+    if (file) {
+      formData.append("image", file);
+    }
+
+    try {
+      const response = await updateProduct(formData);
+      const productsData = await fetchProducts();
+      setProducts(productsData);
+      closeModal();
+    } catch (error) {
+      alert("Failed to update product");
+    }
+  };
 
   useEffect(() => {
-    // Fetch products from Fake Store API
-    axios
-      .get("https://fakestoreapi.com/products")
-      .then((response) => setProducts(response.data))
-      .catch((error) => console.error("Error fetching products:", error));
+    const fetchData = async () => {
+      try {
+        const productsData = await fetchProducts();
+        setProducts(productsData);
+      } catch (error) {
+        console.error("Error fetching data product & category", error);
+      }
+    };
+    fetchData();
   }, []);
 
-  const handleEditProduct = (productId) => {
-    setEditProductId(productId);
-  };
-
-  const handleDeleteProduct = (productId) => {
-    setDeleteProductId(productId);
-  };
-
-  const cancelEdit = () => {
-    setEditProductId(null);
-  };
-
-  const cancelDelete = () => {
-    setDeleteProductId(null);
-  };
+  if (!products) {
+    return null;
+  }
 
   return (
     <div className="product-management">
@@ -39,48 +82,127 @@ const ProductManagement = () => {
           <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>Description</th>
             <th>Price</th>
+            <th>Stock</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {products.map((product) => (
-            <tr key={product.id}>
-              <td>{product.id}</td>
-              <td>{editProductId === product.id ? <input type="text" defaultValue={product.title} /> : product.title}</td>
-              <td>${product.price}</td>
+            <tr key={product.id_product}>
+              <td>{product.id_product}</td>
+              <td>{product.product_name}</td>
+              <td>{product.description}</td>
+              <td>{product.price}</td>
+              <td>{product.stock}</td>
               <td>
-                {editProductId === product.id ? (
-                  <>
-                    <button className="save-btn">Save</button>
-                    <button className="cancel-btn" onClick={cancelEdit}>
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button className="edit-btn" onClick={() => handleEditProduct(product.id)}>
-                      Edit
-                    </button>
-                    <button className="delete-btn" onClick={() => handleDeleteProduct(product.id)}>
-                      Delete
-                    </button>
-                  </>
-                )}
-                {deleteProductId === product.id && (
-                  <div className="confirm-delete">
-                    <p>Are you sure you want to delete this product?</p>
-                    <button className="confirm-delete-btn">Confirm</button>
-                    <button className="cancel-delete-btn" onClick={cancelDelete}>
-                      Cancel
-                    </button>
-                  </div>
-                )}
+                <button className="edit-btn" onClick={() => openModal(product)}>
+                  Edit
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDeleteProduct(product.id_product)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+      {modalOpen && selectedProduct && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={closeModal}>
+              &times;
+            </span>
+            <div className="row">
+              <div className="col-lg-7">
+                <h2>Edit Product</h2>
+                <form>
+                  <label>
+                    Name:
+                    <input
+                      type="text"
+                      name="product_name"
+                      value={selectedProduct.product_name}
+                      onChange={handleInputChange}
+                      className="form-control"
+                    />
+                  </label>
+
+                  <label>
+                    Description:
+                    <textarea
+                      name="description"
+                      value={selectedProduct.description}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      rows="5" // You can adjust the number of rows as needed
+                    />
+                  </label>
+
+                  <label>
+                    Price:
+                    <input
+                      type="number"
+                      name="price"
+                      value={selectedProduct.price}
+                      onChange={handleInputChange}
+                      className="form-control"
+                    />
+                  </label>
+
+                  <label>
+                    Stock:
+                    <input
+                      type="number"
+                      name="stock"
+                      value={selectedProduct.stock}
+                      onChange={handleInputChange}
+                      className="form-control"
+                    />
+                  </label>
+
+                  <label>
+                    Product Image:
+                    <input
+                      type="file"
+                      onChange={handleFileChange}
+                      className="form-control-file"
+                    />
+                  </label>
+
+                  <button
+                    type="button"
+                    className="edit-button btn btn-primary"
+                    onClick={handleSubmit}
+                  >
+                    Save Changes
+                  </button>
+                </form>
+              </div>
+              <div className="col-lg-5">
+                {file ? (
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt="Preview"
+                    className="img-fluid"
+                  />
+                ) : (
+                  <img
+                    src={`http://localhost:4000${selectedProduct.image}`}
+                    alt="Default Preview"
+                    className="img-fluid"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

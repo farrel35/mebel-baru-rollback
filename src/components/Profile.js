@@ -13,6 +13,7 @@ const Profile = () => {
     no_hp: "",
     password: "", // State for password
   });
+
   const passwordRef = useRef();
 
   const [file, setFile] = useState(null); // State to hold the selected file
@@ -46,6 +47,7 @@ const Profile = () => {
     const file = e.target.files[0];
     setFile(file);
   };
+
   const handleSubmit = () => {
     if (!passwordRef.current.value) {
       setError("Password Harus diisi");
@@ -57,7 +59,7 @@ const Profile = () => {
       no_hp: userData.no_hp,
       password: passwordRef.current.value,
     };
-
+    // console.log(file);
     // Call updateProfile with both profile data and file
     updateProfile(inputData, file)
       .then((response) => {
