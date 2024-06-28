@@ -1,28 +1,74 @@
 import React, { useState, useEffect } from "react";
 import "../../css/Admin-css/produkadmin.css";
-import { fetchProducts, updateProduct, deleteProduct } from "./HandleAPI_Admin";
+import {
+  fetchProducts,
+  updateProduct,
+  deleteProduct,
+  createProduct,
+  fetchCategories, // Import fetchCategories function
+} from "./HandleAPI_Admin";
 
 const ProductManagement = () => {
   const [products, setProducts] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null); // State to hold the selected product
-  const [file, setFile] = useState(null); // State to hold the selected file
+  const [categories, setCategories] = useState(null); // State to hold categories
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null); // State to hold selected product for editing
+  const [newProduct, setNewProduct] = useState({
+    product_name: "",
+    description: "",
+    price: "",
+    stock: "",
+    id_category: "", // Initialize id_category state
+  });
+  const [file, setFile] = useState(null); // State to hold selected file
+  const [error, setError] = useState("");
 
-  const openModal = (product) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const productsData = await fetchProducts();
+        const categoriesData = await fetchCategories(); // Fetch categories
+        setProducts(productsData);
+        setCategories(categoriesData); // Assuming categories are in payload[0]
+      } catch (error) {
+        console.error("Error fetching data product & category", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const openEditModal = (product) => {
     setSelectedProduct(product);
-    setModalOpen(true);
+    setEditModalOpen(true);
   };
-  const closeModal = () => {
+
+  const closeEditModal = () => {
     setSelectedProduct(null);
-    setModalOpen(false);
+    setEditModalOpen(false);
+  };
+
+  const openCreateModal = () => {
+    setCreateModalOpen(true);
+  };
+
+  const closeCreateModal = () => {
+    setCreateModalOpen(false);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setSelectedProduct({
-      ...selectedProduct,
-      [name]: value,
-    });
+    if (selectedProduct) {
+      setSelectedProduct({
+        ...selectedProduct,
+        [name]: value,
+      });
+    } else {
+      setNewProduct({
+        ...newProduct,
+        [name]: value,
+      });
+    }
   };
 
   const handleFileChange = (e) => {
@@ -36,7 +82,17 @@ const ProductManagement = () => {
     setProducts(productsData);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmitEdit = async () => {
+    if (
+      !selectedProduct.product_name ||
+      !selectedProduct.description ||
+      !selectedProduct.price ||
+      !selectedProduct.stock
+    ) {
+      setError("Please fill out all required fields.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("id_product", selectedProduct.id_product);
     formData.append("product_name", selectedProduct.product_name);
@@ -52,31 +108,56 @@ const ProductManagement = () => {
       const response = await updateProduct(formData);
       const productsData = await fetchProducts();
       setProducts(productsData);
-      closeModal();
+      closeEditModal();
     } catch (error) {
       alert("Failed to update product");
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const productsData = await fetchProducts();
-        setProducts(productsData);
-      } catch (error) {
-        console.error("Error fetching data product & category", error);
-      }
-    };
-    fetchData();
-  }, []);
+  const handleSubmitCreate = async () => {
+    if (
+      !newProduct.product_name ||
+      !newProduct.description ||
+      !newProduct.price ||
+      !newProduct.stock ||
+      !newProduct.id_category ||
+      !file
+    ) {
+      setError("Please fill out all required fields.");
+      return;
+    }
 
-  if (!products) {
-    return null;
+    const formData = new FormData();
+    formData.append("product_name", newProduct.product_name);
+    formData.append("description", newProduct.description);
+    formData.append("price", newProduct.price);
+    formData.append("stock", newProduct.stock);
+    formData.append("id_category", newProduct.id_category);
+
+    if (file) {
+      formData.append("image", file);
+    }
+
+    try {
+      const response = await createProduct(formData);
+      const productsData = await fetchProducts();
+      setProducts(productsData);
+      closeCreateModal();
+    } catch (error) {
+      alert("Failed to create product");
+    }
+  };
+
+  if (!products || !categories) {
+    return null; // or loading indicator
   }
 
   return (
     <div className="product-management">
       <h2>Manage Products</h2>
+      <button className="create-btn" onClick={openCreateModal}>
+        Create New Product
+      </button>
       <table className="product-table">
         <thead>
           <tr>
@@ -85,6 +166,7 @@ const ProductManagement = () => {
             <th>Description</th>
             <th>Price</th>
             <th>Stock</th>
+            <th>Category</th> {/* Add Category header */}
             <th>Actions</th>
           </tr>
         </thead>
@@ -96,8 +178,12 @@ const ProductManagement = () => {
               <td>{product.description}</td>
               <td>{product.price}</td>
               <td>{product.stock}</td>
+              <td>{product.category_name}</td> {/* Display category name */}
               <td>
-                <button className="edit-btn" onClick={() => openModal(product)}>
+                <button
+                  className="edit-btn"
+                  onClick={() => openEditModal(product)}
+                >
                   Edit
                 </button>
                 <button
@@ -112,15 +198,17 @@ const ProductManagement = () => {
         </tbody>
       </table>
 
-      {modalOpen && selectedProduct && (
+      {/* Edit Product Modal */}
+      {editModalOpen && selectedProduct && (
         <div className="modal">
           <div className="modal-content">
-            <span className="close" onClick={closeModal}>
+            <span className="close" onClick={closeEditModal}>
               &times;
             </span>
             <div className="row">
               <div className="col-lg-7">
                 <h2>Edit Product</h2>
+                {error && <div className="alert alert-danger">{error}</div>}
                 <form>
                   <label>
                     Name:
@@ -140,7 +228,7 @@ const ProductManagement = () => {
                       value={selectedProduct.description}
                       onChange={handleInputChange}
                       className="form-control"
-                      rows="5" // You can adjust the number of rows as needed
+                      rows="5"
                     />
                   </label>
 
@@ -178,7 +266,7 @@ const ProductManagement = () => {
                   <button
                     type="button"
                     className="edit-button btn btn-primary"
-                    onClick={handleSubmit}
+                    onClick={handleSubmitEdit}
                   >
                     Save Changes
                   </button>
@@ -199,6 +287,115 @@ const ProductManagement = () => {
                   />
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Product Modal */}
+      {createModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={closeCreateModal}>
+              &times;
+            </span>
+            <div className="row">
+              <div className={!file ? "col-12" : "col-lg-7"}>
+                <h2>Create Product</h2>
+                {error && <div className="alert alert-danger">{error}</div>}
+
+                <form>
+                  <label>
+                    Name:
+                    <input
+                      type="text"
+                      name="product_name"
+                      value={newProduct.product_name}
+                      onChange={handleInputChange}
+                      className="form-control"
+                    />
+                  </label>
+
+                  <label>
+                    Description:
+                    <textarea
+                      name="description"
+                      value={newProduct.description}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      rows="5"
+                    />
+                  </label>
+
+                  <label>
+                    Price:
+                    <input
+                      type="number"
+                      name="price"
+                      value={newProduct.price}
+                      onChange={handleInputChange}
+                      className="form-control"
+                    />
+                  </label>
+
+                  <label>
+                    Stock:
+                    <input
+                      type="number"
+                      name="stock"
+                      value={newProduct.stock}
+                      onChange={handleInputChange}
+                      className="form-control"
+                    />
+                  </label>
+
+                  <label>
+                    Category:
+                    <select
+                      name="id_category"
+                      value={newProduct.id_category}
+                      onChange={handleInputChange}
+                      className="form-control"
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((category) => (
+                        <option
+                          key={category.id_category}
+                          value={category.id_category}
+                        >
+                          {category.category_name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label>
+                    Product Image:
+                    <input
+                      type="file"
+                      onChange={handleFileChange}
+                      className="form-control-file"
+                    />
+                  </label>
+
+                  <button
+                    type="button"
+                    className="create-button btn btn-primary"
+                    onClick={handleSubmitCreate}
+                  >
+                    Create Product
+                  </button>
+                </form>
+              </div>
+              {file && (
+                <div className="col-lg-5">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt="Preview"
+                    className="img-fluid"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

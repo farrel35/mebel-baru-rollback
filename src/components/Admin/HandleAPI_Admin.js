@@ -29,6 +29,30 @@ export const fetchProducts = async () => {
 
   return response.data.payload;
 };
+export const fetchCategories = async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    Swal.fire({
+      title: "Error!",
+      text: "Anda Bukan Admin.",
+      icon: "error",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/";
+      }
+    });
+  }
+
+  const response = await axios.get(`${BASE_URL}/admin/category`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data.payload;
+};
 
 export const updateProduct = async (formData) => {
   const token = localStorage.getItem("token");
@@ -87,5 +111,29 @@ export const deleteProduct = async (idProduct) => {
       icon: "error",
       confirmButtonText: "OK",
     });
+  }
+};
+export const createProduct = async (formData) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await axios.post(`${BASE_URL}/admin/products`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data", // Set content type for FormData
+      },
+    });
+
+    Swal.fire({
+      title: "Success!",
+      text: "Sukses menambahkan produk.",
+      icon: "success",
+      confirmButtonText: "OK",
+    });
+
+    return response.data; // Ensure the response is correctly structured
+  } catch (error) {
+    console.error("Error updating product", error);
+    throw error;
   }
 };
