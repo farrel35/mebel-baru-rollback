@@ -50,7 +50,7 @@ const Profile = () => {
 
   const handleSubmit = () => {
     if (!passwordRef.current.value) {
-      setError("Password Harus diisi");
+      setError("Password harus diisi");
       return;
     }
     const inputData = {

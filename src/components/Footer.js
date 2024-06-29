@@ -19,7 +19,7 @@ const Footer = () => {
           <div className="container">
             <div className="row">
               <div className="col-12 col-lg-5 mb-4">
-                <button className="navbar-brand">
+                <a className="navbar-brand">
                   <img
                     src={logo}
                     alt="Mebelin Furniture Logo"
@@ -32,7 +32,7 @@ const Footer = () => {
                   <span style={{ display: "block", marginTop: "10px" }}>
                     <b>Mebelin Furniture</b>
                   </span>
-                </button>
+                </a>
                 <p
                   style={{
                     marginTop: "8px",

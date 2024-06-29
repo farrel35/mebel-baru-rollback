@@ -11,7 +11,7 @@ export const fetchProducts = async () => {
   if (!token) {
     Swal.fire({
       title: "Error!",
-      text: "Anda Bukan Admin.",
+      text: "Anda bukan admin.",
       icon: "error",
       confirmButtonText: "OK",
     }).then((result) => {
@@ -35,7 +35,7 @@ export const fetchCategories = async () => {
   if (!token) {
     Swal.fire({
       title: "Error!",
-      text: "Anda Bukan Admin.",
+      text: "Anda bukan admin.",
       icon: "error",
       confirmButtonText: "OK",
     }).then((result) => {
@@ -86,29 +86,50 @@ export const deleteProduct = async (idProduct) => {
     throw new Error("User not authenticated");
   }
 
-  try {
-    const response = await axios.delete(`${BASE_URL}/admin/products`, {
-      data: { id_product: idProduct }, // Correctly send id_product in the request body
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  // Show confirmation dialog
+  const result = await Swal.fire({
+    title: "Apakah kamu yakin?",
+    text: "Apakah kamu yakin menghapus produk ini?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Ya",
+    cancelButtonText: "Tidak",
+  });
 
-    Swal.fire({
-      title: "Sukses!",
-      text: "Sukses menghapus produk.",
-      icon: "success",
-      confirmButtonText: "OK",
-    });
+  // Proceed with deletion if the user confirms
+  if (result.isConfirmed) {
+    try {
+      const response = await axios.delete(`${BASE_URL}/admin/products`, {
+        data: { id_product: idProduct }, // Correctly send id_product in the request body
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    return response.data;
-  } catch (error) {
-    // Handle error, e.g., show error message
-    console.error("Error deleting product:", error);
+      Swal.fire({
+        title: "Sukses!",
+        text: "Berhasil menghapus produk.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
+      return response.data;
+    } catch (error) {
+      // Handle error, e.g., show error message
+      console.error("Error deleting product:", error);
+      Swal.fire({
+        title: "Error!",
+        text: "Gagal menghapus produk.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  } else {
+    // If the user cancels the action, show a cancellation message
     Swal.fire({
-      title: "Error!",
-      text: "Tidak dapat menghapus produk.",
-      icon: "error",
+      title: "Batal",
+      text: "Produk batal dihapus",
+      icon: "info",
       confirmButtonText: "OK",
     });
   }

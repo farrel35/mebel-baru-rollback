@@ -1,8 +1,6 @@
 // AdminDashboard.js
 
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
 import "../../css/Admin-css/dashboardadmin.css";
 import logo from "../../images/logo.png"; // Ganti path dengan path sesuai logo Anda
 
@@ -12,7 +10,10 @@ import CategoryManagement from "./CategoryManagement";
 import OrderManagement from "./OrderManagement";
 import UserManagement from "./UserManagement";
 import Reports from "./Reports";
-
+import {
+  fetchProducts,
+  fetchCategories, // Import fetchCategories function
+} from "./HandleAPI_Admin";
 const AdminDashboard = () => {
   const [activeContent, setActiveContent] = useState(null);
   const [totalProducts, setTotalProducts] = useState(0);
@@ -20,37 +21,18 @@ const AdminDashboard = () => {
   const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
-    fetchProductData();
-    fetchCategoryData();
-    fetchUserData();
+    const fetchData = async () => {
+      try {
+        const productsData = await fetchProducts();
+        const categoriesData = await fetchCategories(); // Fetch categories
+        setTotalProducts(productsData.length);
+        setTotalCategories(categoriesData.length); // Assuming categories are in payload[0]
+      } catch (error) {
+        console.error("Error fetching data product & category", error);
+      }
+    };
+    fetchData();
   }, []);
-
-  const fetchProductData = async () => {
-    try {
-      const response = await axios.get("https://fakestoreapi.com/products");
-      setTotalProducts(response.data.length);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
-
-  const fetchCategoryData = async () => {
-    try {
-      const response = await axios.get("https://fakestoreapi.com/products/categories");
-      setTotalCategories(response.data.length);
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
-
-  const fetchUserData = async () => {
-    try {
-      const response = await axios.get("https://fakestoreapi.com/users");
-      setTotalUsers(response.data.length);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
 
   const showProductManagement = () => {
     setActiveContent(<ProductManagement />);
