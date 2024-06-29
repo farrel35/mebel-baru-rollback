@@ -145,7 +145,7 @@ const AllProducts = () => {
                             <Link to={`/product/${product.id_product}`}>
                               <img
                                 src={`http://localhost:4000${product.image}`}
-                                alt="Grocery Ecommerce Template"
+                                alt="Product"
                                 className="mb-3 img-fluid card-img-top"
                               />
                             </Link>

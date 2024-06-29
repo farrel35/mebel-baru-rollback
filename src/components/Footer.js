@@ -19,7 +19,7 @@ const Footer = () => {
           <div className="container">
             <div className="row">
               <div className="col-12 col-lg-5 mb-4">
-                <a className="navbar-brand" href="#">
+                <button className="navbar-brand">
                   <img
                     src={logo}
                     alt="Mebelin Furniture Logo"
@@ -32,7 +32,7 @@ const Footer = () => {
                   <span style={{ display: "block", marginTop: "10px" }}>
                     <b>Mebelin Furniture</b>
                   </span>
-                </a>
+                </button>
                 <p
                   style={{
                     marginTop: "8px",
@@ -92,40 +92,36 @@ const Footer = () => {
                       <li className="p-0 mt-0">
                         <ul className="list-unstyled">
                           <li className="d-inline me-3">
-                            <a
+                            <button
                               className="text-light link-nodecor"
                               target="_blank"
-                              href="#"
                             >
                               <FontAwesomeIcon icon={faXTwitter} size="xl" />
-                            </a>
+                            </button>
                           </li>
                           <li className="d-inline me-3">
-                            <a
+                            <button
                               className="text-light link-nodecor"
                               target="_blank"
-                              href="#"
                             >
                               <FontAwesomeIcon icon={faFacebookF} size="xl" />
-                            </a>
+                            </button>
                           </li>
                           <li className="d-inline me-3">
-                            <a
+                            <button
                               className="text-light link-nodecor"
                               target="_blank"
-                              href="#"
                             >
                               <FontAwesomeIcon icon={faInstagram} size="xl" />
-                            </a>
+                            </button>
                           </li>
                           <li className="d-inline me-3">
-                            <a
+                            <button
                               className="text-light link-nodecor"
                               target="_blank"
-                              href="#"
                             >
                               <FontAwesomeIcon icon={faWhatsapp} size="xl" />
-                            </a>
+                            </button>
                           </li>
                         </ul>
                       </li>

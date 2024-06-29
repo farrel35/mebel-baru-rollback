@@ -45,8 +45,8 @@ export const login = async (email, password) => {
   localStorage.setItem("token", response.data.token);
 
   Swal.fire({
-    title: "Success!",
-    text: "Login successful.",
+    title: "Sukses!",
+    text: "Berhasil login.",
     icon: "success",
     confirmButtonText: "OK",
   });
@@ -68,10 +68,14 @@ export const register = async (username, email, password) => {
 
   // Optionally handle success message or redirect
   Swal.fire({
-    title: "Registered!",
-    text: "Registration successful.",
+    title: "Sukses!",
+    text: "Berhasil register.",
     icon: "success",
     confirmButtonText: "OK",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = "/login";
+    }
   });
   // Optionally return response.data if needed
   return response.data;
@@ -83,7 +87,7 @@ export const logout = async () => {
   // Optionally handle success message or redirect
   Swal.fire({
     title: "Sukses!",
-    text: "Berhasil Logout.",
+    text: "Berhasil logout.",
     icon: "success",
     confirmButtonText: "OK",
   }).then((result) => {
@@ -117,8 +121,8 @@ export const addToCart = async (product, quantity) => {
     );
 
     Swal.fire({
-      title: "Success!",
-      text: `${product.product_name} has been added to the cart.`,
+      title: "Sukses!",
+      text: `${product.product_name} berhasil dimasukan ke keranjang.`,
       icon: "success",
       confirmButtonText: "OK",
     }).then((result) => {
@@ -131,7 +135,7 @@ export const addToCart = async (product, quantity) => {
   } catch (error) {
     Swal.fire({
       title: "Error!",
-      text: "Anda Harus Login.",
+      text: "Anda harus login.",
       icon: "error",
       confirmButtonText: "OK",
     }).then((result) => {
@@ -202,12 +206,27 @@ export const updateCartQuantity = async (id_cart, quantity) => {
 
 export const getUserData = async () => {
   const token = localStorage.getItem("token");
+
+  if (!token) {
+    Swal.fire({
+      title: "Error!",
+      text: "Anda harus login.",
+      icon: "error",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/login";
+      }
+    });
+    throw new Error("User not authenticated");
+  }
+
   const payload = JSON.parse(atob(token.split(".")[1]));
   const exp = payload.exp;
-
   if (!exp) {
     throw new Error("Token does not have an expiration time");
   }
+
   const currentTime = Math.floor(Date.now() / 1000); // current time in seconds
   const isExpired = currentTime > exp;
 
@@ -215,7 +234,7 @@ export const getUserData = async () => {
     // Optionally handle success message or redirect
     Swal.fire({
       title: "Error!",
-      text: "Session Expired.",
+      text: "Sesi telah berakhir.",
       icon: "warning",
       confirmButtonText: "OK",
     }).then((result) => {
@@ -225,20 +244,6 @@ export const getUserData = async () => {
         window.location.href = "/login";
       }
     });
-  }
-
-  if (!token) {
-    Swal.fire({
-      title: "Error!",
-      text: "Anda Harus Login.",
-      icon: "error",
-      confirmButtonText: "OK",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = "/login";
-      }
-    });
-    throw new Error("User not authenticated");
   }
 
   const response = await axios.get(`${BASE_URL}/profile`, {
@@ -284,8 +289,8 @@ export const updateProfile = async (inputData, file) => {
     );
 
     Swal.fire({
-      title: "Success!",
-      text: "Successfully updated profile.",
+      title: "Sukses!",
+      text: "Sukses mengupdate profil.",
       icon: "success",
       confirmButtonText: "OK",
     }).then((result) => {

@@ -69,7 +69,7 @@ const ProductDetail = () => {
               <div className="col-md-6">
                 <img
                   src={`http://localhost:4000${product.image}`}
-                  alt="Grocery Ecommerce Template"
+                  alt="Product"
                   className="card-img-product mb-5 mb-md-0"
                 />
               </div>
@@ -125,7 +125,7 @@ const ProductDetail = () => {
                               <Link to={`/product/${product.id_product}`}>
                                 <img
                                   src={`http://localhost:4000${product.image}`}
-                                  alt="Grocery Ecommerce Template"
+                                  alt="Product"
                                   className="mb-3 img-fluid card-img-top"
                                 />
                               </Link>

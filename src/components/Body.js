@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -263,7 +263,7 @@ const Body = () => {
                       <div className="card-body text-center py-8">
                         <img
                           src={`http://localhost:4000${category.image}`}
-                          alt="Category Image"
+                          alt="Category"
                           className="mb-3 img-fluid card-img-top"
                         />
                         <div className="text-truncate">
@@ -296,7 +296,7 @@ const Body = () => {
                         <Link to={`/product/${product.id_product}`}>
                           <img
                             src={`http://localhost:4000${product.image}`}
-                            alt="Product Image"
+                            alt="Product"
                             className="mb-3 img-fluid card-img-top"
                           />
                         </Link>

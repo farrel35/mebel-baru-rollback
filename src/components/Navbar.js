@@ -340,13 +340,12 @@ const Navbar = () => {
                         </a>
                       </li>
                       <li>
-                        <a
+                        <button
                           className="dropdown-item"
-                          href=""
                           onClick={handleLogout}
                         >
                           Logout
-                        </a>
+                        </button>
                       </li>
                     </ul>
                   </li>
