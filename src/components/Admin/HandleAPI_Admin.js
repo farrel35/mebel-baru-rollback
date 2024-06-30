@@ -3,6 +3,47 @@ import Swal from "sweetalert2";
 
 const BASE_URL = "http://localhost:4000";
 
+export const fetchAllUsers = async () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    Swal.fire({
+      title: "Error!",
+      text: "Anda harus login.",
+      icon: "error",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/";
+      }
+    });
+    return;
+  }
+
+  try {
+    const response = await axios.get(`${BASE_URL}/admin`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data.payload;
+  } catch (error) {
+    Swal.fire({
+      title: "Error!",
+      text: error.response
+        ? error.response.data.message
+        : "Something went wrong. Please try again later.",
+      icon: "error",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/";
+      }
+    });
+  }
+};
+
 export const fetchProducts = async () => {
   const token = localStorage.getItem("token");
 
@@ -84,6 +125,7 @@ export const fetchCategories = async () => {
     });
   }
 };
+
 export const createProduct = async (formData) => {
   const token = localStorage.getItem("token");
 

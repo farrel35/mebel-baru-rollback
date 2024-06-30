@@ -11,6 +11,7 @@ import OrderManagement from "./OrderManagement";
 import UserManagement from "./UserManagement";
 import Reports from "./Reports";
 import {
+  fetchAllUsers,
   fetchProducts,
   fetchCategories, // Import fetchCategories function
 } from "./HandleAPI_Admin";
@@ -25,8 +26,10 @@ const AdminDashboard = () => {
       try {
         const productsData = await fetchProducts();
         const categoriesData = await fetchCategories(); // Fetch categories
+        const allUsersData = await fetchAllUsers();
         setTotalProducts(productsData.length);
         setTotalCategories(categoriesData.length); // Assuming categories are in payload[0]
+        setTotalUsers(allUsersData.length);
       } catch (error) {
         console.error("Error fetching data product & category", error);
       }
