@@ -23,15 +23,6 @@ const Body = () => {
   const [currentPage] = useState(1);
   const productsPerPage = 8;
 
-  const formatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-  });
-
-  const handleAddToCart = (product) => {
-    addToCart(product, 1);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -62,6 +53,15 @@ const Body = () => {
 
     fetchData();
   }, []);
+
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
+  const handleAddToCart = (product) => {
+    addToCart(product, 1);
+  };
 
   if (!products) {
     return;

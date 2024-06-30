@@ -6,7 +6,6 @@ import { fetchUserData, updateProfile } from "./HandleAPI_User";
 
 const Profile = () => {
   const [modalOpen, setModalOpen] = useState(false);
-
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -14,14 +13,16 @@ const Profile = () => {
     password: "", // State for password
   });
 
-  const passwordRef = useRef();
-
   const [file, setFile] = useState(null); // State to hold the selected file
   const [error, setError] = useState("");
+  const passwordRef = useRef();
 
   useEffect(() => {
     getUserData();
   }, []);
+
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
 
   const getUserData = async () => {
     try {
@@ -31,9 +32,6 @@ const Profile = () => {
       console.error("Error fetching user data:", error);
     }
   };
-
-  const openModal = () => setModalOpen(true);
-  const closeModal = () => setModalOpen(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -59,8 +57,6 @@ const Profile = () => {
       no_hp: userData.no_hp,
       password: passwordRef.current.value,
     };
-    // console.log(file);
-    // Call updateProfile with both profile data and file
     updateProfile(inputData, file)
       .then((response) => {
         console.log("Profile updated successfully:", response);

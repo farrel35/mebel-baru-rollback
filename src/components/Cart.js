@@ -22,16 +22,6 @@ const Cart = () => {
     paymentMethod: "",
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setShippingInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Shipping Information Submitted:", shippingInfo);
-  };
-
   useEffect(() => {
     const getCart = async () => {
       try {
@@ -56,6 +46,16 @@ const Cart = () => {
 
     getCart();
   }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setShippingInfo((prevInfo) => ({ ...prevInfo, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Shipping Information Submitted:", shippingInfo);
+  };
 
   const formatter = new Intl.NumberFormat("id-ID", {
     style: "currency",

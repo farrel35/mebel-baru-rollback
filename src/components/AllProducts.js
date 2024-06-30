@@ -20,15 +20,6 @@ const AllProducts = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(8);
 
-  const formatter = new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-  });
-
-  const handleAddToCart = (product) => {
-    addToCart(product, 1);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -54,6 +45,15 @@ const AllProducts = () => {
 
     fetchData();
   }, []);
+
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
+  const handleAddToCart = (product) => {
+    addToCart(product, 1);
+  };
 
   const handleCategoryClick = async (category) => {
     setSelectedCategory(category);

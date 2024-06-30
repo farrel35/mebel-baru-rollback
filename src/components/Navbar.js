@@ -97,6 +97,7 @@ const Navbar = () => {
 
     getCart();
   }, []);
+
   const handleSearchInputChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
