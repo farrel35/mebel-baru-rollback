@@ -66,6 +66,10 @@ const Profile = () => {
       });
   };
 
+  if (!userData) {
+    return;
+  }
+
   return (
     <>
       <Navbar />

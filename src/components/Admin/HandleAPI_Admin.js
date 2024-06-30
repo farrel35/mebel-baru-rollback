@@ -11,7 +11,31 @@ export const fetchProducts = async () => {
   if (!token) {
     Swal.fire({
       title: "Error!",
-      text: "Anda bukan admin.",
+      text: "Anda harus login.",
+      icon: "error",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/";
+      }
+    });
+    return;
+  }
+
+  try {
+    const response = await axios.get(`${BASE_URL}/admin/products`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data.payload;
+  } catch (error) {
+    Swal.fire({
+      title: "Error!",
+      text: error.response
+        ? error.response.data.message
+        : "Something went wrong. Please try again later.",
       icon: "error",
       confirmButtonText: "OK",
     }).then((result) => {
@@ -20,22 +44,39 @@ export const fetchProducts = async () => {
       }
     });
   }
-
-  const response = await axios.get(`${BASE_URL}/admin/products`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data.payload;
 };
+
 export const fetchCategories = async () => {
   const token = localStorage.getItem("token");
 
   if (!token) {
     Swal.fire({
       title: "Error!",
-      text: "Anda bukan admin.",
+      text: "Anda harus login.",
+      icon: "error",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/";
+      }
+    });
+    return;
+  }
+
+  try {
+    const response = await axios.get(`${BASE_URL}/admin/category`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return response.data.payload;
+  } catch (error) {
+    Swal.fire({
+      title: "Error!",
+      text: error.response
+        ? error.response.data.message
+        : "Something went wrong. Please try again later.",
       icon: "error",
       confirmButtonText: "OK",
     }).then((result) => {
@@ -44,14 +85,6 @@ export const fetchCategories = async () => {
       }
     });
   }
-
-  const response = await axios.get(`${BASE_URL}/admin/category`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data.payload;
 };
 
 export const updateProduct = async (formData) => {
