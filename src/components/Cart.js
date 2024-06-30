@@ -33,7 +33,7 @@ const Cart = () => {
   };
 
   useEffect(() => {
-    const fetchCart = async () => {
+    const getCart = async () => {
       try {
         const cartData = await fetchCart();
         const productsData = await fetchProducts();
@@ -54,7 +54,7 @@ const Cart = () => {
       }
     };
 
-    fetchCart();
+    getCart();
   }, []);
 
   const formatter = new Intl.NumberFormat("id-ID", {
