@@ -53,13 +53,10 @@ export const login = async (email, password) => {
   setTimeout(() => {
     window.location.href = "/";
   }, 1000);
-
-  // Optionally return response.data if needed
-  return response.data;
 };
 
 export const register = async (username, email, password) => {
-  const response = await axios.post(`${BASE_URL}/users/register`, {
+  await axios.post(`${BASE_URL}/users/register`, {
     username,
     email,
     password,
@@ -76,8 +73,6 @@ export const register = async (username, email, password) => {
       window.location.href = "/login";
     }
   });
-  // Optionally return response.data if needed
-  return response.data;
 };
 
 export const logout = async () => {
@@ -195,19 +190,46 @@ export const deleteCartItem = async (id_cart) => {
     throw new Error("User not authenticated");
   }
 
-  try {
-    const response = await axios.delete(`${BASE_URL}/cart/${id_cart}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    window.location.reload();
+  const result = await Swal.fire({
+    title: "Apakah kamu yakin?",
+    text: "Apakah kamu yakin menghapus produk ini?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Ya",
+    cancelButtonText: "Tidak",
+  });
 
-    return response.data; // Optionally return data confirming deletion
-  } catch (error) {
-    // Handle error, e.g., show error message
-    console.error("Error deleting cart item:", error);
-    throw error;
+  if (result.isConfirmed) {
+    try {
+      axios.delete(`${BASE_URL}/cart/${id_cart}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      Swal.fire({
+        title: "Sukses!",
+        text: "Berhasil menghapus produk.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+
+      window.location.reload();
+    } catch (error) {
+      Swal.fire({
+        title: "Error!",
+        text: "Gagal menghapus produk.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  } else {
+    Swal.fire({
+      title: "Batal",
+      text: "Produk batal dihapus",
+      icon: "info",
+      confirmButtonText: "OK",
+    });
   }
 };
 
@@ -216,7 +238,7 @@ export const updateCartQuantity = async (id_cart, quantity) => {
   if (!token) {
     throw new Error("User not authenticated");
   }
-  const response = await axios.put(
+  await axios.put(
     `${BASE_URL}/cart/${id_cart}`,
     { quantity },
     {
@@ -226,8 +248,6 @@ export const updateCartQuantity = async (id_cart, quantity) => {
     }
   );
   window.location.reload();
-
-  return response.data;
 };
 
 export const fetchUserData = async () => {
@@ -303,7 +323,7 @@ export const updateProfile = async (inputData, file) => {
   formData.append("password", hashedPassword); // Append hashed password
 
   try {
-    const response = await axios.put(
+    await axios.put(
       `${BASE_URL}/profile/edit`, // Replace with your actual endpoint for updating profile
       formData, // Use formData instead of { username, email, no_hp, password }
       {
@@ -324,8 +344,6 @@ export const updateProfile = async (inputData, file) => {
         window.location.reload(); // Refresh the page after successful update
       }
     });
-
-    return response.data; // Return the updated profile data if needed
   } catch (error) {
     console.error("Error updating profile:", error);
     throw new Error("Failed to update profile");
