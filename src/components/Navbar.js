@@ -24,6 +24,7 @@ const Navbar = () => {
   const [categories, setCategories] = useState([]);
   const [cartItems, setCartItems] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [userData, setUserData] = useState(false);
 
   useEffect(() => {
@@ -106,6 +107,9 @@ const Navbar = () => {
   const getUserData = async () => {
     try {
       const data = await fetchUserData();
+      if (data.role === "admin") {
+        setIsAdmin(true);
+      }
       setUserData(data);
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -330,6 +334,13 @@ const Navbar = () => {
                           Profile
                         </a>
                       </li>
+                      {isAdmin && (
+                        <li>
+                          <Link to="/admin" className="dropdown-item">
+                            Admin Dashboard
+                          </Link>
+                        </li>
+                      )}
                       <li>
                         <button
                           className="dropdown-item"

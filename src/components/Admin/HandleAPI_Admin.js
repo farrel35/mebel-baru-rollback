@@ -1,7 +1,5 @@
 import axios from "axios";
 import Swal from "sweetalert2";
-import { jwtDecode } from "jwt-decode";
-import bcrypt from "bcryptjs-react";
 
 const BASE_URL = "http://localhost:4000";
 
