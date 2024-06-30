@@ -92,36 +92,40 @@ const Footer = () => {
                       <li className="p-0 mt-0">
                         <ul className="list-unstyled">
                           <li className="d-inline me-3">
-                            <button
+                            <a
                               className="text-light link-nodecor"
                               target="_blank"
+                              href="#"
                             >
                               <FontAwesomeIcon icon={faXTwitter} size="xl" />
-                            </button>
+                            </a>
                           </li>
                           <li className="d-inline me-3">
-                            <button
+                            <a
                               className="text-light link-nodecor"
                               target="_blank"
+                              href="#"
                             >
                               <FontAwesomeIcon icon={faFacebookF} size="xl" />
-                            </button>
+                            </a>
                           </li>
                           <li className="d-inline me-3">
-                            <button
+                            <a
                               className="text-light link-nodecor"
                               target="_blank"
+                              href="#"
                             >
                               <FontAwesomeIcon icon={faInstagram} size="xl" />
-                            </button>
+                            </a>
                           </li>
                           <li className="d-inline me-3">
-                            <button
+                            <a
                               className="text-light link-nodecor"
                               target="_blank"
+                              href="#"
                             >
                               <FontAwesomeIcon icon={faWhatsapp} size="xl" />
-                            </button>
+                            </a>
                           </li>
                         </ul>
                       </li>

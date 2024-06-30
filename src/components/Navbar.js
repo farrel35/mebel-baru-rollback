@@ -11,8 +11,8 @@ import "../css/Navbar.css";
 import {
   fetchProducts,
   fetchCategories,
-  getCart,
-  getUserData,
+  fetchCart,
+  fetchUserData,
   logout,
 } from "./HandleAPI_User";
 
@@ -30,7 +30,7 @@ const Navbar = () => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsLoggedIn(true);
-      fetchUserData();
+      getUserData();
     } else {
       setIsLoggedIn(false);
     }
@@ -74,30 +74,20 @@ const Navbar = () => {
   }, [searchQuery, allProducts]);
 
   useEffect(() => {
-    const fetchCart = async () => {
+    const getCart = async () => {
       try {
-        const cartData = await getCart();
+        const cartData = await fetchCart(); // Assuming fetchCart() fetches cart items
         const productsData = await fetchProducts();
 
-        // Merge cart items by product id
-        const mergedCartItems = cartData.reduce((acc, cartItem) => {
-          const existingItemIndex = acc.findIndex(
-            (item) => item.id_product === cartItem.id_product
+        const mergedCartItems = cartData.map((cartItem) => {
+          const product = productsData.find(
+            (product) => product.id_product === cartItem.id_product
           );
-          if (existingItemIndex > -1) {
-            acc[existingItemIndex].quantity += cartItem.quantity;
-          } else {
-            const product = productsData.find(
-              (prod) => prod.id_product === cartItem.id_product
-            );
-            acc.push({
-              ...cartItem,
-              product_name: product ? product.product_name : "Unknown",
-              image: product ? product.image : null,
-            });
-          }
-          return acc;
-        }, []);
+          return {
+            ...cartItem,
+            ...product,
+          };
+        });
 
         setCartItems(mergedCartItems);
       } catch (error) {
@@ -105,16 +95,16 @@ const Navbar = () => {
       }
     };
 
-    fetchCart();
+    getCart();
   }, []);
   const handleSearchInputChange = (event) => {
     const query = event.target.value;
     setSearchQuery(query);
   };
 
-  const fetchUserData = async () => {
+  const getUserData = async () => {
     try {
-      const data = await getUserData();
+      const data = await fetchUserData();
       setUserData(data);
     } catch (error) {
       console.error("Error fetching user data:", error);

@@ -6,7 +6,7 @@ import BackToTopButton from "./BackToTopButton";
 import "../css/Cart.css";
 import {
   fetchProducts,
-  getCart,
+  fetchCart,
   deleteCartItem,
   updateCartQuantity,
 } from "./HandleAPI_User";
@@ -35,31 +35,20 @@ const Cart = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const cartData = await getCart(); // Assuming getCart() fetches cart items
+        const cartData = await fetchCart();
         const productsData = await fetchProducts();
 
-        // Create a map to merge cart items with the same id_product
-        const mergedCartItemsMap = new Map();
-        cartData.forEach((cartItem) => {
+        const mergedCartItems = cartData.map((cartItem) => {
           const product = productsData.find(
-            (prod) => prod.id_product === cartItem.id_product
+            (product) => product.id_product === cartItem.id_product
           );
-          const mergedCartItem = {
+          return {
             ...cartItem,
-            product_name: product ? product.product_name : "Unknown",
-            image: product ? product.image : null,
-            totalQuantity:
-              (mergedCartItemsMap.get(cartItem.id_product)?.totalQuantity ||
-                0) + cartItem.quantity,
-            totalPrice:
-              (mergedCartItemsMap.get(cartItem.id_product)?.totalPrice || 0) +
-              parseFloat(cartItem.price) * parseInt(cartItem.quantity),
+            ...product,
           };
-          mergedCartItemsMap.set(cartItem.id_product, mergedCartItem);
         });
-        const mergedCartItems = Array.from(mergedCartItemsMap.values());
 
-        setCartItems(mergedCartItems); // Set the merged cart items in state or wherever needed
+        setCartItems(mergedCartItems);
       } catch (error) {
         console.error("Error fetching cart:", error);
       }
@@ -74,7 +63,7 @@ const Cart = () => {
   });
 
   const total = cartItems
-    .reduce((acc, item) => acc + item.totalQuantity * parseFloat(item.price), 0)
+    .reduce((acc, item) => acc + item.quantity * parseFloat(item.price), 0)
     .toFixed(2);
 
   const increaseQuantity = async (id_product) => {
@@ -149,7 +138,7 @@ const Cart = () => {
               </Link>
               <div className="ms-3">
                 <h5 className="cart-item-title">{item.product_name}</h5>
-                <p className="small mb-0">Quantity: {item.totalQuantity}</p>
+                <p className="small mb-0">Quantity: {item.quantity}</p>
               </div>
             </div>
             <div className="col-3 d-flex justify-content-center align-items-center">

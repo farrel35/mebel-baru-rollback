@@ -1,6 +1,5 @@
 import axios from "axios";
 import Swal from "sweetalert2";
-import { jwtDecode } from "jwt-decode";
 import bcrypt from "bcryptjs-react";
 
 const BASE_URL = "http://localhost:4000";
@@ -97,57 +96,7 @@ export const logout = async () => {
   });
 };
 
-export const addToCart = async (product, quantity) => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("User not authenticated");
-    }
-
-    const decodedToken = jwtDecode(token);
-
-    const response = await axios.post(
-      `${BASE_URL}/cart/add`,
-      {
-        id_user: decodedToken.id_user,
-        id_product: product.id_product,
-        quantity: quantity,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    Swal.fire({
-      title: "Sukses!",
-      text: `${product.product_name} berhasil dimasukan ke keranjang.`,
-      icon: "success",
-      confirmButtonText: "OK",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.reload();
-      }
-    });
-
-    return response.data;
-  } catch (error) {
-    Swal.fire({
-      title: "Error!",
-      text: "Anda harus login.",
-      icon: "error",
-      confirmButtonText: "OK",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = "/login";
-      }
-    });
-    console.error("Error adding to cart", error);
-  }
-};
-
-export const getCart = async () => {
+export const fetchCart = async () => {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -161,6 +110,83 @@ export const getCart = async () => {
   });
 
   return response.data;
+};
+
+export const addToCart = async (product, quantity) => {
+  try {
+    const token = localStorage.getItem("token");
+    const cart = await fetchCart();
+
+    const productInCart = cart.find(
+      (item) => item.id_product === product.id_product
+    );
+
+    if (!token) {
+      throw new Error("User not authenticated");
+    }
+
+    if (productInCart) {
+      const newQuantity = productInCart.quantity + quantity;
+      await axios.put(
+        `${BASE_URL}/cart/${productInCart.id_cart}`,
+        {
+          quantity: newQuantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      Swal.fire({
+        title: "Updated!",
+        text: `${product.product_name} quantity berhasil diupdate.`,
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          window.location.reload();
+        }
+      });
+    } else {
+      axios.post(
+        `${BASE_URL}/cart/add`,
+        {
+          id_product: product.id_product,
+          quantity: quantity,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      Swal.fire({
+        title: "Sukses!",
+        text: `${product.product_name} berhasil dimasukan ke keranjang.`,
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.reload();
+        }
+      });
+    }
+  } catch (error) {
+    Swal.fire({
+      title: "Error!",
+      text: "Anda harus login.",
+      icon: "error",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/login";
+      }
+    });
+    console.error("Error adding to cart", error);
+  }
 };
 
 export const deleteCartItem = async (id_cart) => {
@@ -204,7 +230,7 @@ export const updateCartQuantity = async (id_cart, quantity) => {
   return response.data;
 };
 
-export const getUserData = async () => {
+export const fetchUserData = async () => {
   const token = localStorage.getItem("token");
 
   if (!token) {

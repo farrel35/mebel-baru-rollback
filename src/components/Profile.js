@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import "../css/Profile.css";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import { getUserData, updateProfile } from "./HandleAPI_User";
+import { fetchUserData, updateProfile } from "./HandleAPI_User";
 
 const Profile = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -20,12 +20,12 @@ const Profile = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchUserData();
+    getUserData();
   }, []);
 
-  const fetchUserData = async () => {
+  const getUserData = async () => {
     try {
-      const data = await getUserData();
+      const data = await fetchUserData();
       setUserData(data);
     } catch (error) {
       console.error("Error fetching user data:", error);
