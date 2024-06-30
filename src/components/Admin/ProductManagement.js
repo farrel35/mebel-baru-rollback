@@ -77,9 +77,11 @@ const ProductManagement = () => {
   };
 
   const handleDeleteProduct = async (id_product) => {
-    deleteProduct(id_product);
-    const productsData = await fetchProducts();
-    setProducts(productsData);
+    const result = await deleteProduct(id_product);
+    if (result.payload.isSuccess) {
+      const productsData = await fetchProducts();
+      setProducts(productsData);
+    }
   };
 
   const handleSubmitEdit = async () => {

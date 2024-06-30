@@ -86,6 +86,30 @@ export const fetchCategories = async () => {
     });
   }
 };
+export const createProduct = async (formData) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await axios.post(`${BASE_URL}/admin/products`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data", // Set content type for FormData
+      },
+    });
+
+    Swal.fire({
+      title: "Success!",
+      text: "Sukses menambahkan produk.",
+      icon: "success",
+      confirmButtonText: "OK",
+    });
+
+    return response.data; // Ensure the response is correctly structured
+  } catch (error) {
+    console.error("Error updating product", error);
+    throw error;
+  }
+};
 
 export const updateProduct = async (formData) => {
   const token = localStorage.getItem("token");
@@ -167,11 +191,12 @@ export const deleteProduct = async (idProduct) => {
     });
   }
 };
-export const createProduct = async (formData) => {
+
+export const createCategory = async (formData) => {
   const token = localStorage.getItem("token");
 
   try {
-    const response = await axios.post(`${BASE_URL}/admin/products`, formData, {
+    const response = await axios.post(`${BASE_URL}/admin/category`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data", // Set content type for FormData
@@ -180,7 +205,7 @@ export const createProduct = async (formData) => {
 
     Swal.fire({
       title: "Success!",
-      text: "Sukses menambahkan produk.",
+      text: "Sukses menambahkan category.",
       icon: "success",
       confirmButtonText: "OK",
     });
@@ -189,5 +214,85 @@ export const createProduct = async (formData) => {
   } catch (error) {
     console.error("Error updating product", error);
     throw error;
+  }
+};
+
+export const updateCategory = async (formData) => {
+  const token = localStorage.getItem("token");
+
+  try {
+    const response = await axios.put(`${BASE_URL}/admin/category`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data", // Set content type for FormData
+      },
+    });
+
+    Swal.fire({
+      title: "Success!",
+      text: "Sukses update category.",
+      icon: "success",
+      confirmButtonText: "OK",
+    });
+
+    return response.data; // Ensure the response is correctly structured
+  } catch (error) {
+    console.error("Error updating category", error);
+    throw error;
+  }
+};
+
+export const deleteCategory = async (idCategory) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    throw new Error("User not authenticated");
+  }
+
+  // Show confirmation dialog
+  const result = await Swal.fire({
+    title: "Apakah kamu yakin?",
+    text: "Apakah kamu yakin menghapus kategori ini?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Ya",
+    cancelButtonText: "Tidak",
+  });
+
+  // Proceed with deletion if the user confirms
+  if (result.isConfirmed) {
+    try {
+      const response = await axios.delete(`${BASE_URL}/admin/category`, {
+        data: { id_category: idCategory }, // Correctly send id_product in the request body
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      Swal.fire({
+        title: "Sukses!",
+        text: "Berhasil menghapus kategori.",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+      return response.data;
+    } catch (error) {
+      // Handle error, e.g., show error message
+      console.error("Error deleting kategori:", error);
+      Swal.fire({
+        title: "Error!",
+        text: "Gagal menghapus kategori.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+    }
+  } else {
+    // If the user cancels the action, show a cancellation message
+    Swal.fire({
+      title: "Batal",
+      text: "Kategori batal dihapus",
+      icon: "info",
+      confirmButtonText: "OK",
+    });
   }
 };
