@@ -203,7 +203,7 @@ const ProductManagement = () => {
   return (
     <div className="container-fluid container-admin">
       <h2>Kelola Produk</h2>
-      <button className="btn btn-primary mb-4" onClick={openCreateModal}>
+      <button className="btn btn-create-admin mb-4" onClick={openCreateModal}>
         Tambah Produk
       </button>
       <div className="table-responsive">
@@ -211,7 +211,7 @@ const ProductManagement = () => {
           <thead className="thead-light">
             <tr>
               <th>Id Produk</th>
-              <th>Nama</th>
+              <th>Nama Produk</th>
               <th>Deskripsi</th>
               <th>Harga</th>
               <th>Stok</th>
@@ -332,7 +332,7 @@ const ProductManagement = () => {
                     </div>
                     <button
                       type="button"
-                      className="btn btn-primary mt-3"
+                      className="btn btn-edit-admin"
                       onClick={handleSubmitEdit}
                     >
                       Simpan
@@ -450,10 +450,10 @@ const ProductManagement = () => {
                     </div>
                     <button
                       type="button"
-                      className="btn btn-primary mt-4"
+                      className="btn btn-edit-admin"
                       onClick={handleSubmitCreate}
                     >
-                      Create Product
+                      Tambah Produk
                     </button>
                   </form>
                 </div>

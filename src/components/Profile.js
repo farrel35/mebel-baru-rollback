@@ -165,7 +165,7 @@ const Profile = () => {
 
                     <button
                       type="button"
-                      className="edit-button btn btn-primary"
+                      className="btn btn-edit-profile"
                       onClick={handleSubmit}
                     >
                       Simpan Perubahan

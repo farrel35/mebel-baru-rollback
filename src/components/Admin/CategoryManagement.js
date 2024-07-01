@@ -140,171 +140,189 @@ const CategoryManagement = () => {
   };
 
   return (
-    <div className="category-management">
-      <h2>Manage Categories</h2>
-      <div className="add-category">
-        <button className="btn btn-primary" onClick={openCreateModal}>
-          Add Category
-        </button>
-      </div>
-      <table className="category-table">
-        <thead>
-          <tr>
-            <th>Category Code</th>
-            <th>Category Name</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.map((category) => (
-            <tr key={category.id_category}>
-              <td>{category.categorys}</td>
-              <td>{category.category_name}</td>
-              <td>
-                <button onClick={() => openEditModal(category)}>Edit</button>
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDeleteCategory(category.id_category)}
-                >
-                  Delete
-                </button>
-              </td>
+    <div className="container-fluid container-admin">
+      <h2>Kelola Kategori</h2>
+      <button className="btn btn-create-admin mb-4" onClick={openCreateModal}>
+        Tambah Kategori
+      </button>
+      <div className="table-responsive">
+        <table className="table table-admin">
+          <thead className="thead-light">
+            <tr>
+              <th>Kode Kategori</th>
+              <th>Nama Kategori</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {categories.map((category) => (
+              <tr key={category.id_category}>
+                <td>{category.categorys}</td>
+                <td>{category.category_name}</td>
+                <td>
+                  <button
+                    className="btn btn-success btn-edit"
+                    onClick={() => openEditModal(category)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger btn-delete"
+                    onClick={() => handleDeleteCategory(category.id_category)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       {editModalOpen && selectedCategory && (
         <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={closeEditModal}>
-              &times;
-            </span>
-            <div className="row">
-              <div className="col-lg-7">
-                <h2>Edit Category</h2>
-                {error && <div className="alert alert-danger">{error}</div>}
-                <form>
-                  <label>
-                    Nama Kategori:
-                    <input
-                      type="text"
-                      name="category_name"
-                      value={selectedCategory.category_name}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  </label>
+          <div className="modal-content-admin">
+            <div className="modal-header">
+              <h5 className="modal-title">Edit Produk</h5>
+              <button type="button" className="close" onClick={closeEditModal}>
+                <span>&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="row">
+                <div className="col-lg-7">
+                  {error && <div className="alert alert-danger">{error}</div>}
+                  <form>
+                    <label>
+                      Nama Kategori:
+                      <input
+                        type="text"
+                        name="category_name"
+                        value={selectedCategory.category_name}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </label>
 
-                  <label>
-                    Kode Kategori:
-                    <input
-                      type="text"
-                      name="categorys"
-                      value={selectedCategory.categorys}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  </label>
+                    <label>
+                      Kode Kategori:
+                      <input
+                        type="text"
+                        name="categorys"
+                        value={selectedCategory.categorys}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </label>
 
-                  <label>
-                    Category Image:
-                    <input
-                      type="file"
-                      onChange={handleFileChange}
-                      className="form-control-file"
-                    />
-                  </label>
+                    <label>
+                      Category Image:
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        className="form-control-file"
+                      />
+                    </label>
 
-                  <button
-                    type="button"
-                    className="edit-button btn btn-primary"
-                    onClick={handleSubmitEdit}
-                  >
-                    Save Changes
-                  </button>
-                </form>
-              </div>
-              <div className="col-lg-5">
-                {file ? (
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt="Preview"
-                    className="img-fluid"
-                  />
-                ) : (
-                  <img
-                    src={`http://localhost:4000${selectedCategory.image}`}
-                    alt="Default Preview"
-                    className="img-fluid"
-                  />
-                )}
+                    <button
+                      type="button"
+                      className="btn btn-edit-admin"
+                      onClick={handleSubmitEdit}
+                    >
+                      Simpan
+                    </button>
+                  </form>
+                </div>
+                <div className="col-lg-5">
+                  {file ? (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      className="img-fluid"
+                    />
+                  ) : (
+                    <img
+                      src={`http://localhost:4000${selectedCategory.image}`}
+                      alt="Default Preview"
+                      className="img-fluid"
+                    />
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
+
       {createModalOpen && (
         <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={closeCreateModal}>
-              &times;
-            </span>
-            <div className="row">
-              <div className={!file ? "col-12" : "col-lg-7"}>
-                <h2>Create Category</h2>
+          <div className="modal-content-admin">
+            <div className="modal-header">
+              <h5 className="modal-title">Tambah Kategori</h5>
+              <button
+                type="button"
+                className="close"
+                onClick={closeCreateModal}
+              >
+                <span>&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="row">
+                <div className={!file ? "col-12" : "col-lg-7"}>
+                  <form>
+                    <label>
+                      Kode Kategori:
+                      <input
+                        type="text"
+                        name="categorys"
+                        value={newCategory.categorys}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </label>
 
-                <form>
-                  <label>
-                    Category Name:
-                    <input
-                      type="text"
-                      name="category_name"
-                      value={newCategory.category_name}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  </label>
+                    <label>
+                      Nama Kategori:
+                      <input
+                        type="text"
+                        name="category_name"
+                        value={newCategory.category_name}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </label>
 
-                  <label>
-                    Category Code:
-                    <input
-                      type="text"
-                      name="categorys"
-                      value={newCategory.categorys}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  </label>
+                    <label>
+                      Foto Kategori:
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        className="form-control-file"
+                      />
+                    </label>
 
-                  <label>
-                    Category Image:
-                    <input
-                      type="file"
-                      onChange={handleFileChange}
-                      className="form-control-file"
-                    />
-                  </label>
+                    {error && <div className="alert alert-danger">{error}</div>}
 
-                  {error && <div className="alert alert-danger">{error}</div>}
-
-                  <button
-                    type="button"
-                    className="create-button btn btn-primary"
-                    onClick={handleSubmitCreate}
-                  >
-                    Create Category
-                  </button>
-                </form>
-              </div>
-              {file && (
-                <div className="col-lg-5">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt="Preview"
-                    className="img-fluid"
-                  />
+                    <button
+                      type="button"
+                      className="btn btn-edit-admin"
+                      onClick={handleSubmitCreate}
+                    >
+                      Tambah Kategori
+                    </button>
+                  </form>
                 </div>
-              )}
+                {file && (
+                  <div className="col-lg-5">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      className="img-fluid"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
