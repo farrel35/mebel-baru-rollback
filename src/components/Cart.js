@@ -28,6 +28,9 @@ const Cart = () => {
         const cartData = await fetchCart();
         const productsData = await fetchProducts();
 
+        if (!cartData) {
+          return;
+        }
         const mergedCartItems = cartData.map((cartItem) => {
           const product = productsData.find(
             (product) => product.id_product === cartItem.id_product

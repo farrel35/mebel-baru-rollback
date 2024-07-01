@@ -4,59 +4,51 @@ import "../../css/Admin-css/usermanagement.css";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editedUser, setEditedUser] = useState({
-    id: "",
-    name: { firstname: "", lastname: "" },
-    email: "",
-    password: "",
-  });
 
   useEffect(() => {
-    axios
-      .get("https://fakestoreapi.com/users")
-      .then((response) => setUsers(response.data))
-      .catch((error) => console.error("Error fetching users:", error));
+    fetchUsers();
   }, []);
 
-  const openModal = (user) => {
-    setEditedUser({ ...user, password: "" }); // Initialize password to an empty string
-    setIsModalOpen(true);
-  };
+  const fetchUsers = async () => {
+    const token = localStorage.getItem("token");
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "firstname" || name === "lastname") {
-      setEditedUser((prevUser) => ({
-        ...prevUser,
-        name: {
-          ...prevUser.name,
-          [name]: value,
+    try {
+      const response = await axios.get("http://localhost:4000/admin", {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      }));
-    } else {
-      setEditedUser((prevUser) => ({
-        ...prevUser,
-        [name]: value,
-      }));
+      });
+      console.log(response);
+      setUsers(response.data.payload);
+    } catch (error) {
+      console.error("Error fetching users:", error);
     }
   };
 
-  const handleSave = () => {
-    const updatedUsers = users.map((user) =>
-      user.id === editedUser.id ? editedUser : user
-    );
-    setUsers(updatedUsers);
-    closeModal();
-  };
+  const handleRoleChange = async (userId, newRole) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.put(
+        `http://localhost:4000/admin`,
+        { id_user: userId, role: newRole }, // Correctly send id_user and role in the request body
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-  const handleDelete = (userId) => {
-    const updatedUsers = users.filter((user) => user.id !== userId);
-    setUsers(updatedUsers);
+      if (response.data.payload.isSuccess) {
+        const updatedUsers = users.map((user) =>
+          user.id_user === userId ? { ...user, role: newRole } : user
+        );
+        setUsers(updatedUsers);
+      } else {
+        console.error("Failed to update user role.");
+      }
+    } catch (error) {
+      console.error("Error updating user role:", error);
+    }
   };
 
   return (
@@ -66,75 +58,34 @@ const UserManagement = () => {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Name</th>
+            <th>Username</th>
             <th>Email</th>
-            <th>Actions</th>
+            <th>Role</th>
+            <th>Edit Role</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user) => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{`${user.name.firstname} ${user.name.lastname}`}</td>
+            <tr key={user.id_user}>
+              <td>{user.id_user}</td>
+              <td>{user.username}</td>
               <td>{user.email}</td>
+              <td>{user.role}</td>
               <td>
-                <button className="edit-btn" onClick={() => openModal(user)}>
-                  Edit
-                </button>
-                <button className="delete-btn" onClick={() => handleDelete(user.id)}>
-                  Delete
-                </button>
+                <select
+                  value={user.role}
+                  onChange={(e) =>
+                    handleRoleChange(user.id_user, e.target.value)
+                  }
+                >
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                </select>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-      {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Edit User</h3>
-            <label>
-              First Name:
-              <input
-                type="text"
-                name="firstname"
-                value={editedUser.name.firstname}
-                onChange={handleInputChange}
-              />
-            </label>
-            <label>
-              Last Name:
-              <input
-                type="text"
-                name="lastname"
-                value={editedUser.name.lastname}
-                onChange={handleInputChange}
-              />
-            </label>
-            <label>
-              Email:
-              <input
-                type="email"
-                name="email"
-                value={editedUser.email}
-                onChange={handleInputChange}
-              />
-            </label>
-            <label>
-              Password:
-              <input
-                type="password"
-                name="password"
-                value={editedUser.password}
-                onChange={handleInputChange}
-              />
-            </label>
-            <button onClick={handleSave}>Save</button>
-            <button onClick={closeModal}>Cancel</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -98,28 +98,64 @@ export const fetchCart = async () => {
     throw new Error("User not authenticated");
   }
 
-  const response = await axios.get(`${BASE_URL}/cart`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-
-  return response.data;
+  try {
+    const response = await axios.get(`${BASE_URL}/cart`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    return null;
+  }
 };
 
 export const addToCart = async (product, quantity) => {
-  try {
-    const token = localStorage.getItem("token");
-    const cart = await fetchCart();
+  const token = localStorage.getItem("token");
 
+  if (!token) {
+    Swal.fire({
+      title: "Error!",
+      text: "Anda harus login.",
+      icon: "error",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = "/login";
+      }
+    });
+  }
+
+  const cart = await fetchCart();
+
+  if (!cart) {
+    await axios.post(
+      `${BASE_URL}/cart/add`,
+      {
+        id_product: product.id_product,
+        quantity: quantity,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    Swal.fire({
+      title: "Sukses!",
+      text: `${product.product_name} berhasil dimasukan ke keranjang.`,
+      icon: "success",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.reload();
+      }
+    });
+  } else {
     const productInCart = cart.find(
       (item) => item.id_product === product.id_product
     );
-
-    if (!token) {
-      throw new Error("User not authenticated");
-    }
-
     if (productInCart) {
       const newQuantity = productInCart.quantity + quantity;
       await axios.put(
@@ -145,7 +181,7 @@ export const addToCart = async (product, quantity) => {
         }
       });
     } else {
-      axios.post(
+      await axios.post(
         `${BASE_URL}/cart/add`,
         {
           id_product: product.id_product,
@@ -169,18 +205,6 @@ export const addToCart = async (product, quantity) => {
         }
       });
     }
-  } catch (error) {
-    Swal.fire({
-      title: "Error!",
-      text: "Anda harus login.",
-      icon: "error",
-      confirmButtonText: "OK",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        window.location.href = "/login";
-      }
-    });
-    console.error("Error adding to cart", error);
   }
 };
 
