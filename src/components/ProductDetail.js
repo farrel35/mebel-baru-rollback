@@ -9,7 +9,11 @@ import Footer from "./Footer";
 import BackToTopButton from "./BackToTopButton";
 
 import "../css/ProductDetail.css";
-import { fetchProducts, fetchProductDetail } from "./HandleAPI_User";
+import {
+  fetchProductsByCategory,
+  fetchProductDetail,
+  fetchCategories,
+} from "./HandleAPI_User";
 import { addToCart } from "./HandleAPI_User";
 
 const ProductDetail = () => {
@@ -25,12 +29,27 @@ const ProductDetail = () => {
     const fetchData = async () => {
       try {
         const productsDetail = await fetchProductDetail(id);
-        const productsData = await fetchProducts();
+        const categoriesData = await fetchCategories();
+
+        const mergedProduct = (product) => {
+          const category = categoriesData.find(
+            (cat) => cat.id_category === product.id_category
+          );
+          return {
+            ...product,
+            category_name: category ? category.category_name : "Unknown",
+          };
+        };
+
+        const mergedProducts = mergedProduct(productsDetail);
+        const productsData = await fetchProductsByCategory(
+          mergedProducts.category_name
+        );
 
         setProduct(productsDetail);
         setAvailableProducts(productsData);
       } catch (error) {
-        console.error("Error fetching data product", error);
+        console.error("Error fetching product data", error);
       }
     };
 
@@ -46,6 +65,11 @@ const ProductDetail = () => {
       setCurrentPage(currentPage - 1);
     }
   };
+
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
 
   const handleAddToCart = async (product) => {
     addToCart(product, quantity);
@@ -76,7 +100,7 @@ const ProductDetail = () => {
               <div className="col-md-6">
                 <h1 className="display-5 fw-bolder">{product.product_name}</h1>
                 <div className="fs-5 mb-5">
-                  <span>Rp {product.price}</span>
+                  <span>{formatter.format(product.price)}</span>
                 </div>
                 <p className="lead">{product.description}</p>
                 <div className="d-flex">
@@ -105,7 +129,7 @@ const ProductDetail = () => {
         {/* Related items section*/}
         <section className="py-5 bg-light">
           <div className="container">
-            <h2 className="fw-bolder mb-4">Related products</h2>
+            <h2 className="fw-bolder mb-4">Produk Serupa</h2>
             <div className="product-slider">
               <div className="slider-container">
                 <button
@@ -117,54 +141,63 @@ const ProductDetail = () => {
                 </button>
                 <div className="our-products-section product-cards">
                   <div className="row g-4 justify-content-center row-cols-1 row-cols-md-2 row-cols-lg-4 p-2">
-                    {currentProducts.map((product) => (
-                      <div className="col" key={product.id_product}>
-                        <div className="card card-product">
-                          <div className="card-body">
-                            <div className="text-center position-relative">
-                              <Link to={`/product/${product.id_product}`}>
-                                <img
-                                  src={`http://localhost:4000${product.image}`}
-                                  alt="Product"
-                                  className="mb-3 img-fluid card-img-top"
-                                />
-                              </Link>
-                            </div>
-                            <div className="text-small mb-1">
-                              <Link
-                                to={`/category/${product.category_name}`}
-                                className="text-inherit text-decoration-none text-dark"
-                              >
-                                <small>{product.category_name}</small>
-                              </Link>
-                            </div>
-                            <h5 className="fs-6">
-                              <Link
-                                to={`/product/${product.id_product}`}
-                                className="text-inherit text-decoration-none text-dark"
-                              >
-                                {product.product_name}
-                              </Link>
-                            </h5>
-                            <div className="d-flex justify-content-between align-items-center mt-3">
-                              <div>
-                                <span className="text-dark">
-                                  ${product.price}
-                                </span>
-                              </div>
-                              <div>
-                                <button
-                                  className="btn add-to-cart-btn"
-                                  onClick={() => handleAddToCart(product)}
+                    {currentProducts
+                      .filter(
+                        (currentProducts) =>
+                          currentProducts.id_product !== product.id_product
+                      )
+                      .map((currentProducts) => (
+                        <div className="col" key={currentProducts.id_product}>
+                          <div className="card card-product">
+                            <div className="card-body">
+                              <div className="text-center position-relative">
+                                <Link
+                                  to={`/product/${currentProducts.id_product}`}
                                 >
-                                  <FontAwesomeIcon icon={faCartPlus} />
-                                </button>
+                                  <img
+                                    src={`http://localhost:4000${currentProducts.image}`}
+                                    alt="Product"
+                                    className="mb-3 img-fluid card-img-top"
+                                  />
+                                </Link>
+                              </div>
+                              <div className="text-small mb-1">
+                                <Link
+                                  to={`/category/${currentProducts.category_name}`}
+                                  className="text-inherit text-decoration-none text-dark"
+                                >
+                                  <small>{currentProducts.category_name}</small>
+                                </Link>
+                              </div>
+                              <h5 className="fs-6">
+                                <Link
+                                  to={`/product/${currentProducts.id_product}`}
+                                  className="text-inherit text-decoration-none text-dark"
+                                >
+                                  {currentProducts.product_name}
+                                </Link>
+                              </h5>
+                              <div className="d-flex justify-content-between align-items-center mt-3">
+                                <div>
+                                  <span className="text-dark">
+                                    {formatter.format(currentProducts.price)}
+                                  </span>
+                                </div>
+                                <div>
+                                  <button
+                                    className="btn add-to-cart-btn"
+                                    onClick={() =>
+                                      handleAddToCart(currentProducts)
+                                    }
+                                  >
+                                    <FontAwesomeIcon icon={faCartPlus} />
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 </div>
                 <button

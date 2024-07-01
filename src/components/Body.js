@@ -81,7 +81,7 @@ const Body = () => {
           {/* Bagian Why Choose Us */}
           <section id="why-choose-us" className="why-choose-us-section">
             <h2>
-              Our <span>Service</span>
+              <span>Layanan</span> Kami
             </h2>
             <div className="row g-4 row-cols-1 row-cols-md-2 row-cols-lg-4">
               <div className="col" data-aos="fade-up">
@@ -217,9 +217,9 @@ const Body = () => {
                       <span className="fw-bold">30%</span>
                       Off
                     </p>
-                    <a href="#!" className="btn btn-dark">
+                    <Link to="/all-products" className="btn btn-dark">
                       Shop Now
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -239,9 +239,9 @@ const Body = () => {
                       <span className="fw-bold">30%</span>
                       Off
                     </p>
-                    <a href="#!" className="btn btn-dark">
+                    <Link to="/all-products" className="btn btn-dark">
                       Shop Now
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
