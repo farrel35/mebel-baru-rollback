@@ -77,11 +77,10 @@ const ProductManagement = () => {
   };
 
   const handleDeleteProduct = async (id_product) => {
-    const result = await deleteProduct(id_product);
-    if (result.payload.isSuccess) {
-      const productsData = await fetchProducts();
-      setProducts(productsData);
-    }
+    await deleteProduct(id_product);
+
+    const productsData = await fetchProducts();
+    setProducts(productsData);
   };
 
   const handleSubmitEdit = async () => {
@@ -107,9 +106,12 @@ const ProductManagement = () => {
     }
 
     try {
-      const response = await updateProduct(formData);
-      const productsData = await fetchProducts();
-      setProducts(productsData);
+      const updateProducts = await updateProduct(formData);
+      if (updateProducts.payload.isSuccess) {
+        const productsData = await fetchProducts();
+        setProducts(productsData);
+      }
+
       closeEditModal();
     } catch (error) {
       alert("Failed to update product");
@@ -141,9 +143,11 @@ const ProductManagement = () => {
     }
 
     try {
-      const response = await createProduct(formData);
-      const productsData = await fetchProducts();
-      setProducts(productsData);
+      const createProducts = await createProduct(formData);
+      if (createProducts.payload.isSuccess) {
+        const productsData = await fetchProducts();
+        setProducts(productsData);
+      }
       closeCreateModal();
     } catch (error) {
       alert("Failed to create product");

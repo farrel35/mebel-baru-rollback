@@ -80,8 +80,8 @@ const CategoryManagement = () => {
   };
 
   const handleDeleteCategory = async (id_category) => {
-    const result = await deleteCategory(id_category);
-    if (result.payload.isSuccess) {
+    const deleteCategorys = await deleteCategory(id_category);
+    if (deleteCategorys.payload.isSuccess) {
       const categoriesData = await fetchCategories();
       setCategories(categoriesData);
     }
@@ -100,11 +100,13 @@ const CategoryManagement = () => {
     if (file) {
       formData.append("image", file);
     }
-    console.log(selectedCategory.categorys);
+
     try {
-      await updateCategory(formData);
-      const categoriesData = await fetchCategories();
-      setCategories(categoriesData);
+      const updateCategorys = await updateCategory(formData);
+      if (updateCategorys.payload.isSuccess) {
+        const categoriesData = await fetchCategories();
+        setCategories(categoriesData);
+      }
       closeEditModal();
     } catch (error) {
       alert("Failed to update category");
@@ -126,9 +128,11 @@ const CategoryManagement = () => {
     }
 
     try {
-      await createCategory(formData);
-      const categoriesData = await fetchCategories();
-      setCategories(categoriesData);
+      const createCategorys = await createCategory(formData);
+      if (createCategorys.payload.isSuccess) {
+        const categoriesData = await fetchCategories();
+        setCategories(categoriesData);
+      }
       closeCreateModal();
     } catch (error) {
       alert("Failed to create category");

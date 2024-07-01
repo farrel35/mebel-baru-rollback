@@ -1,50 +1,28 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import "../../css/Admin-css/usermanagement.css";
+import { fetchAllUsers, changeRole } from "./HandleAPI_Admin";
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetchUsers();
+    const fetchData = async () => {
+      try {
+        const allUsersData = await fetchAllUsers();
+        setUsers(allUsersData);
+      } catch (error) {
+        console.error("Error fetching data product & category", error);
+      }
+    };
+    fetchData();
   }, []);
-
-  const fetchUsers = async () => {
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await axios.get("http://localhost:4000/admin", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(response);
-      setUsers(response.data.payload);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
 
   const handleRoleChange = async (userId, newRole) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.put(
-        `http://localhost:4000/admin`,
-        { id_user: userId, role: newRole }, // Correctly send id_user and role in the request body
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.data.payload.isSuccess) {
-        const updatedUsers = users.map((user) =>
-          user.id_user === userId ? { ...user, role: newRole } : user
-        );
-        setUsers(updatedUsers);
-      } else {
-        console.error("Failed to update user role.");
+      const changeRoles = await changeRole(userId, newRole);
+      if (changeRoles.payload) {
+        const allUsersData = await fetchAllUsers();
+        setUsers(allUsersData);
       }
     } catch (error) {
       console.error("Error updating user role:", error);

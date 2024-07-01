@@ -9,7 +9,6 @@ import ProductManagement from "./ProductManagement";
 import CategoryManagement from "./CategoryManagement";
 import OrderManagement from "./OrderManagement";
 import UserManagement from "./UserManagement";
-import Reports from "./Reports";
 import {
   fetchAllUsers,
   fetchProducts,
@@ -53,10 +52,6 @@ const AdminDashboard = () => {
     setActiveContent(<UserManagement />);
   };
 
-  const showReports = () => {
-    setActiveContent(<Reports />);
-  };
-
   const hideActiveContent = () => {
     setActiveContent(null);
   };
@@ -82,9 +77,7 @@ const AdminDashboard = () => {
           <button onClick={showUserManagement}>
             <i className="fas fa-users"></i> Manage Users
           </button>
-          <button onClick={showReports}>
-            <i className="fas fa-chart-line"></i> View Reports
-          </button>
+
           {/* Tambahkan tautan lainnya di sini */}
         </div>
       </div>

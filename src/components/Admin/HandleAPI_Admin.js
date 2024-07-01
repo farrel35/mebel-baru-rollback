@@ -269,7 +269,7 @@ export const updateCategory = async (formData) => {
     });
 
     Swal.fire({
-      title: "Success!",
+      title: "Sukses!",
       text: "Sukses update category.",
       icon: "success",
       confirmButtonText: "OK",
@@ -334,5 +334,29 @@ export const deleteCategory = async (idCategory) => {
       icon: "info",
       confirmButtonText: "OK",
     });
+  }
+};
+
+export const changeRole = async (userId, newRole) => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.put(
+      `http://localhost:4000/admin`,
+      { id_user: userId, role: newRole }, // Correctly send id_user and role in the request body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    Swal.fire({
+      title: "Sukses!",
+      text: "Sukses mengganti role.",
+      icon: "success",
+      confirmButtonText: "OK",
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user role:", error);
   }
 };
