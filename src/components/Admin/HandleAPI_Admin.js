@@ -270,7 +270,7 @@ export const updateCategory = async (formData) => {
 
     Swal.fire({
       title: "Sukses!",
-      text: "Sukses update category.",
+      text: "Sukses update kategori.",
       icon: "success",
       confirmButtonText: "OK",
     });

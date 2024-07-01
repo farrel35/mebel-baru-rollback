@@ -8,22 +8,28 @@ const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleUsernameChange = (e) => setUsername(e.target.value);
   const handleEmailChange = (e) => setEmail(e.target.value);
   const handlePasswordChange = (e) => setPassword(e.target.value);
+  const handleConfirmPasswordChange = (e) => setConfirmPassword(e.target.value);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!username || !email || !password) {
-      setError("Nama, email, and harus diisi.");
+    if (!username || !email || !password || !confirmPassword) {
+      setError("Nama, email, dan password harus diisi.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Password tidak sama.");
       return;
     }
     try {
       await register(username, email, password);
     } catch (error) {
-      setError("Nama atau Email sudah dipakai");
+      setError("Nama atau email sudah dipakai");
       console.error("Register error:", error);
     }
   };
@@ -75,7 +81,18 @@ const Register = () => {
                     />
                     <label for="floatingPassword">Password</label>
                   </div>
-
+                  <div className="form-floating mb-3">
+                    <input
+                      type="password"
+                      className="form-control"
+                      id="floatingConfirmPassword"
+                      placeholder="Confirm Password"
+                      onChange={handleConfirmPasswordChange}
+                    />
+                    <label htmlFor="floatingConfirmPassword">
+                      Confirm Password
+                    </label>
+                  </div>
                   <div className="text-start my-3">
                     <Link to="/login" className="text-success a-none">
                       Have account? Login

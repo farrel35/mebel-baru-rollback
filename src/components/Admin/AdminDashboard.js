@@ -14,6 +14,7 @@ import {
   fetchProducts,
   fetchCategories, // Import fetchCategories function
 } from "./HandleAPI_Admin";
+import { Link } from "react-router-dom";
 const AdminDashboard = () => {
   const [activeContent, setActiveContent] = useState(null);
   const [totalProducts, setTotalProducts] = useState(0);
@@ -60,7 +61,16 @@ const AdminDashboard = () => {
     <div className="admin-container">
       <div className="admin-sidebar">
         <div className="sidebar-header">
-          <img src={logo} alt="Logo" className="sidebar-logo" />
+          <Link to="/" className="navbar-brand">
+            <img
+              src={logo}
+              alt="Mebelin Furniture Logo"
+              style={{
+                width: "75px",
+                height: "auto",
+              }}
+            />
+          </Link>
           <h1>Admin Dashboard</h1>
         </div>
         <hr className="sidebar-divider" /> {/* Garis pemisah */}

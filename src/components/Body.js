@@ -212,12 +212,12 @@ const Body = () => {
                 >
                   <div>
                     <h3 className="fw-bold mb-1">Sofa</h3>
-                    <p className="mb-4">
+                    {/* <p className="mb-4">
                       Get Upto
                       <span className="fw-bold">30%</span>
                       Off
-                    </p>
-                    <Link to="/all-products" className="btn btn-dark">
+                    </p> */}
+                    <Link to="/all-products" className="btn btn-dark mt-4">
                       Shop Now
                     </Link>
                   </div>
@@ -234,12 +234,12 @@ const Body = () => {
                 >
                   <div>
                     <h3 className="fw-bold mb-1">Meja &amp; Kursi</h3>
-                    <p className="mb-4">
+                    {/* <p className="mb-4">
                       Get Upto
                       <span className="fw-bold">30%</span>
                       Off
-                    </p>
-                    <Link to="/all-products" className="btn btn-dark">
+                    </p> */}
+                    <Link to="/all-products" className="btn btn-dark mt-4">
                       Shop Now
                     </Link>
                   </div>
