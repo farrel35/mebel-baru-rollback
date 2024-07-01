@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import "../../css/Admin-css/Category-admin.css";
+import "../../css/AdminManagement.css";
+
 import {
   fetchCategories,
   createCategory,

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "../../css/Admin-css/produkadmin.css";
+import "../../css/AdminManagement.css";
+
 import {
   fetchProducts,
   updateProduct,
@@ -24,13 +25,29 @@ const ProductManagement = () => {
   const [file, setFile] = useState(null); // State to hold selected file
   const [error, setError] = useState("");
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const productsData = await fetchProducts();
-        const categoriesData = await fetchCategories(); // Fetch categories
-        setProducts(productsData);
-        setCategories(categoriesData); // Assuming categories are in payload[0]
+        const categoriesData = await fetchCategories();
+
+        const mergedProducts = productsData.map((product) => {
+          const category = categoriesData.find(
+            (cat) => cat.id_category === product.id_category
+          );
+          return {
+            ...product,
+            category_name: category ? category.category_name : "Unknown",
+          };
+        });
+
+        setProducts(mergedProducts);
+        setCategories(categoriesData);
       } catch (error) {
         console.error("Error fetching data product & category", error);
       }
@@ -49,6 +66,7 @@ const ProductManagement = () => {
   };
 
   const openCreateModal = () => {
+    setFile(null);
     setCreateModalOpen(true);
   };
 
@@ -109,7 +127,19 @@ const ProductManagement = () => {
       const updateProducts = await updateProduct(formData);
       if (updateProducts.payload.isSuccess) {
         const productsData = await fetchProducts();
-        setProducts(productsData);
+        const categoriesData = await fetchCategories();
+
+        const mergedProducts = productsData.map((product) => {
+          const category = categoriesData.find(
+            (cat) => cat.id_category === product.id_category
+          );
+          return {
+            ...product,
+            category_name: category ? category.category_name : "Unknown",
+          };
+        });
+
+        setProducts(mergedProducts);
       }
 
       closeEditModal();
@@ -146,7 +176,19 @@ const ProductManagement = () => {
       const createProducts = await createProduct(formData);
       if (createProducts.payload.isSuccess) {
         const productsData = await fetchProducts();
-        setProducts(productsData);
+        const categoriesData = await fetchCategories();
+
+        const mergedProducts = productsData.map((product) => {
+          const category = categoriesData.find(
+            (cat) => cat.id_category === product.id_category
+          );
+          return {
+            ...product,
+            category_name: category ? category.category_name : "Unknown",
+          };
+        });
+
+        setProducts(mergedProducts);
       }
       closeCreateModal();
     } catch (error) {
@@ -159,139 +201,159 @@ const ProductManagement = () => {
   }
 
   return (
-    <div className="product-management">
-      <h2>Manage Products</h2>
-      <button className="create-btn" onClick={openCreateModal}>
-        Create New Product
+    <div className="container-fluid container-admin">
+      <h2>Kelola Produk</h2>
+      <button className="btn btn-primary mb-4" onClick={openCreateModal}>
+        Tambah Produk
       </button>
-      <table className="product-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Category</th> {/* Add Category header */}
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {products.map((product) => (
-            <tr key={product.id_product}>
-              <td>{product.id_product}</td>
-              <td>{product.product_name}</td>
-              <td>{product.description}</td>
-              <td>{product.price}</td>
-              <td>{product.stock}</td>
-              <td>{product.category_name}</td> {/* Display category name */}
-              <td>
-                <button
-                  className="edit-btn"
-                  onClick={() => openEditModal(product)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDeleteProduct(product.id_product)}
-                >
-                  Delete
-                </button>
-              </td>
+      <div className="table-responsive">
+        <table className="table table-admin">
+          <thead className="thead-light">
+            <tr>
+              <th>Id Produk</th>
+              <th>Nama</th>
+              <th>Deskripsi</th>
+              <th>Harga</th>
+              <th>Stok</th>
+              <th>Kategori</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {products.map((product) => (
+              <tr key={product.id_product}>
+                <td>{product.id_product}</td>
+                <td>{product.product_name}</td>
+                <td>{product.description}</td>
+                <td>{formatter.format(product.price)}</td>
+                <td>{product.stock}</td>
+                <td>{product.category_name}</td>
+                <td>
+                  <button
+                    className="btn btn-success btn-edit"
+                    onClick={() => openEditModal(product)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="btn btn-danger btn-delete"
+                    onClick={() => handleDeleteProduct(product.id_product)}
+                  >
+                    Hapus
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {/* Edit Product Modal */}
       {editModalOpen && selectedProduct && (
         <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={closeEditModal}>
-              &times;
-            </span>
-            <div className="row">
-              <div className="col-lg-7">
-                <h2>Edit Product</h2>
-                {error && <div className="alert alert-danger">{error}</div>}
-                <form>
-                  <label>
-                    Name:
-                    <input
-                      type="text"
-                      name="product_name"
-                      value={selectedProduct.product_name}
-                      onChange={handleInputChange}
-                      className="form-control"
+          <div className="modal-content-admin">
+            <div className="modal-header">
+              <h5 className="modal-title">Edit Produk</h5>
+              <button type="button" className="close" onClick={closeEditModal}>
+                <span>&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="row">
+                <div className="col-lg-7">
+                  {error && <div className="alert alert-danger">{error}</div>}
+                  <form>
+                    <div className="form-group">
+                      <label>Nama:</label>
+                      <input
+                        type="text"
+                        name="product_name"
+                        value={selectedProduct.product_name}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Deskripsi:</label>
+                      <textarea
+                        name="description"
+                        value={selectedProduct.description}
+                        onChange={handleInputChange}
+                        className="form-control"
+                        rows="5"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Harga:</label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={selectedProduct.price}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Stok:</label>
+                      <input
+                        type="number"
+                        name="stock"
+                        value={selectedProduct.stock}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Kategori:</label>
+                      <select
+                        name="id_category"
+                        value={selectedProduct.id_category}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      >
+                        <option value="">Pilih Kategori</option>
+                        {categories.map((category) => (
+                          <option
+                            key={category.id_category}
+                            value={category.id_category}
+                          >
+                            {category.category_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Foto Produk:</label>
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        className="form-control-file"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-primary mt-3"
+                      onClick={handleSubmitEdit}
+                    >
+                      Simpan
+                    </button>
+                  </form>
+                </div>
+                <div className="col-lg-5">
+                  {file ? (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      className="img-fluid"
                     />
-                  </label>
-
-                  <label>
-                    Description:
-                    <textarea
-                      name="description"
-                      value={selectedProduct.description}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      rows="5"
+                  ) : (
+                    <img
+                      src={`http://localhost:4000${selectedProduct.image}`}
+                      alt="Default Preview"
+                      className="img-fluid"
                     />
-                  </label>
-
-                  <label>
-                    Price:
-                    <input
-                      type="number"
-                      name="price"
-                      value={selectedProduct.price}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  </label>
-
-                  <label>
-                    Stock:
-                    <input
-                      type="number"
-                      name="stock"
-                      value={selectedProduct.stock}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  </label>
-
-                  <label>
-                    Product Image:
-                    <input
-                      type="file"
-                      onChange={handleFileChange}
-                      className="form-control-file"
-                    />
-                  </label>
-
-                  <button
-                    type="button"
-                    className="edit-button btn btn-primary"
-                    onClick={handleSubmitEdit}
-                  >
-                    Save Changes
-                  </button>
-                </form>
-              </div>
-              <div className="col-lg-5">
-                {file ? (
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt="Preview"
-                    className="img-fluid"
-                  />
-                ) : (
-                  <img
-                    src={`http://localhost:4000${selectedProduct.image}`}
-                    alt="Default Preview"
-                    className="img-fluid"
-                  />
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -301,107 +363,110 @@ const ProductManagement = () => {
       {/* Create Product Modal */}
       {createModalOpen && (
         <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={closeCreateModal}>
-              &times;
-            </span>
-            <div className="row">
-              <div className={!file ? "col-12" : "col-lg-7"}>
-                <h2>Create Product</h2>
-                {error && <div className="alert alert-danger">{error}</div>}
-
-                <form>
-                  <label>
-                    Name:
-                    <input
-                      type="text"
-                      name="product_name"
-                      value={newProduct.product_name}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  </label>
-
-                  <label>
-                    Description:
-                    <textarea
-                      name="description"
-                      value={newProduct.description}
-                      onChange={handleInputChange}
-                      className="form-control"
-                      rows="5"
-                    />
-                  </label>
-
-                  <label>
-                    Price:
-                    <input
-                      type="number"
-                      name="price"
-                      value={newProduct.price}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  </label>
-
-                  <label>
-                    Stock:
-                    <input
-                      type="number"
-                      name="stock"
-                      value={newProduct.stock}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                  </label>
-
-                  <label>
-                    Category:
-                    <select
-                      name="id_category"
-                      value={newProduct.id_category}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    >
-                      <option value="">Select Category</option>
-                      {categories.map((category) => (
-                        <option
-                          key={category.id_category}
-                          value={category.id_category}
-                        >
-                          {category.category_name}
+          <div className="modal-content-admin">
+            <div className="modal-header">
+              <h5 className="modal-title">Tambah Produk</h5>
+              <button
+                type="button"
+                className="close"
+                onClick={closeCreateModal}
+              >
+                <span>&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="row">
+                <div className={!file ? "col-12" : "col-lg-7"}>
+                  {error && <div className="alert alert-danger">{error}</div>}
+                  <form>
+                    <div className="form-group">
+                      <label>Nama:</label>
+                      <input
+                        type="text"
+                        name="product_name"
+                        value={newProduct.product_name}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Deskripsi:</label>
+                      <textarea
+                        name="description"
+                        value={newProduct.description}
+                        onChange={handleInputChange}
+                        className="form-control"
+                        rows="5"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Harga:</label>
+                      <input
+                        type="number"
+                        name="price"
+                        value={newProduct.price}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Stok:</label>
+                      <input
+                        type="number"
+                        name="stock"
+                        value={newProduct.stock}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label>Kategori:</label>
+                      <select
+                        name="id_category"
+                        value={newProduct.id_category}
+                        onChange={handleInputChange}
+                        className="form-control"
+                      >
+                        <option value="" disabled>
+                          Pilih Kategori
                         </option>
-                      ))}
-                    </select>
-                  </label>
-
-                  <label>
-                    Product Image:
-                    <input
-                      type="file"
-                      onChange={handleFileChange}
-                      className="form-control-file"
-                    />
-                  </label>
-
-                  <button
-                    type="button"
-                    className="create-button btn btn-primary"
-                    onClick={handleSubmitCreate}
-                  >
-                    Create Product
-                  </button>
-                </form>
-              </div>
-              {file && (
-                <div className="col-lg-5">
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt="Preview"
-                    className="img-fluid"
-                  />
+                        {categories.map((category) => (
+                          <option
+                            key={category.id_category}
+                            value={category.id_category}
+                          >
+                            {category.category_name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Foto Produk:</label>
+                      <input
+                        type="file"
+                        onChange={handleFileChange}
+                        className="form-control-file"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      className="btn btn-primary mt-4"
+                      onClick={handleSubmitCreate}
+                    >
+                      Create Product
+                    </button>
+                  </form>
                 </div>
-              )}
+                {file && (
+                  <div className="col-lg-5">
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Preview"
+                      className="img-fluid"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

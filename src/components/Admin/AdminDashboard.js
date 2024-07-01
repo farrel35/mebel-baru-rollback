@@ -1,7 +1,7 @@
 // AdminDashboard.js
 
 import React, { useState, useEffect } from "react";
-import "../../css/Admin-css/dashboardadmin.css";
+import "../../css/AdminManagement.css";
 import logo from "../../images/logo.png"; // Ganti path dengan path sesuai logo Anda
 
 // Import komponen-komponen untuk Product Management dan lainnya

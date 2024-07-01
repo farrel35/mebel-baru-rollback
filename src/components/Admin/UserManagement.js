@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "../../css/Admin-css/usermanagement.css";
+import "../../css/AdminManagement.css";
+
 import { fetchAllUsers, changeRole } from "./HandleAPI_Admin";
 
 const UserManagement = () => {

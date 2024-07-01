@@ -28,7 +28,7 @@ const Body = () => {
       try {
         const productsData = await fetchProducts();
         const categoriesData = await fetchCategories();
-
+        console.log(categoriesData);
         const mergedProducts = productsData.map((product) => {
           const category = categoriesData.find(
             (cat) => cat.id_category === product.id_category
