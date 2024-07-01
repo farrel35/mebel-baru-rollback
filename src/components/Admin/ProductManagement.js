@@ -57,6 +57,7 @@ const ProductManagement = () => {
 
   const openEditModal = (product) => {
     setSelectedProduct(product);
+    setFile(null);
     setEditModalOpen(true);
   };
 

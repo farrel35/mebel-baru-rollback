@@ -52,6 +52,7 @@ const CategoryManagement = () => {
 
   const openEditModal = (category) => {
     setSelectedCategory(category);
+    setFile(null);
     setEditModalOpen(true);
   };
 
@@ -61,6 +62,7 @@ const CategoryManagement = () => {
   };
 
   const openCreateModal = () => {
+    setFile(null);
     setCreateModalOpen(true);
   };
 

@@ -31,40 +31,43 @@ const UserManagement = () => {
   };
 
   return (
-    <div className="user-management">
+    <div className="container-fluid container-admin">
       <h2>Manage Users</h2>
-      <table className="user-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Edit Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id_user}>
-              <td>{user.id_user}</td>
-              <td>{user.username}</td>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>
-                <select
-                  value={user.role}
-                  onChange={(e) =>
-                    handleRoleChange(user.id_user, e.target.value)
-                  }
-                >
-                  <option value="admin">Admin</option>
-                  <option value="user">User</option>
-                </select>
-              </td>
+      <div className="table-responsive">
+        <table className="table table-admin">
+          <thead className="thead-light">
+            <tr>
+              <th>Id User</th>
+              <th>Nama</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Edit Role</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id_user}>
+                <td>{user.id_user}</td>
+                <td>{user.username}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <select
+                    className="form-select"
+                    value={user.role}
+                    onChange={(e) =>
+                      handleRoleChange(user.id_user, e.target.value)
+                    }
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
