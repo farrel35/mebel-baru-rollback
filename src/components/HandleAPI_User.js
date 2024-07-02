@@ -124,6 +124,7 @@ export const addToCart = async (product, quantity) => {
         window.location.href = "/login";
       }
     });
+    return;
   }
 
   const cart = await fetchCart();
